@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>РКН - Симулятор Блокировок</title>
+    <title>РКН - Simulator Ultimate</title>
     <style>
         /* ГЛОБАЛЬНЫЕ НАСТРОЙКИ */
         *, *::before, *::after { box-sizing: border-box; }
@@ -32,37 +32,29 @@
             80% { border-color: magenta; box-shadow: 0 0 20px magenta; }
             100% { border-color: red; box-shadow: 0 0 20px red; }
         }
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 10px #ffd700; }
-            50% { box-shadow: 0 0 40px #ffd700, inset 0 0 30px #ffd700; }
-            100% { box-shadow: 0 0 10px #ffd700; }
+        @keyframes rgb-bg-flash {
+            0% { background-color: #ff0000; box-shadow: inset 0 0 20px #ff0000; }
+            20% { background-color: #ffff00; box-shadow: inset 0 0 20px #ffff00; }
+            40% { background-color: #00ff00; box-shadow: inset 0 0 20px #00ff00; }
+            60% { background-color: #00ffff; box-shadow: inset 0 0 20px #00ffff; }
+            80% { background-color: #0000ff; box-shadow: inset 0 0 20px #0000ff; }
+            100% { background-color: #ff00ff; box-shadow: inset 0 0 20px #ff00ff; }
         }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-3px, 3px); }
-            40% { transform: translate(-3px, -3px); }
-            60% { transform: translate(3px, 3px); }
-            80% { transform: translate(3px, -3px); }
-            100% { transform: translate(0); }
+        @keyframes hue-spin {
+            from { filter: hue-rotate(0deg); }
+            to { filter: hue-rotate(360deg); }
         }
-        @keyframes blackhole {
-            0% { box-shadow: inset 0 0 20px #000; transform: scale(1); }
-            50% { box-shadow: inset 0 0 100px #000; transform: scale(0.98); }
-            100% { box-shadow: inset 0 0 20px #000; transform: scale(1); }
+        @keyframes ultra-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
-        @keyframes shake-hard {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
+        
+        /* Старые анимации */
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700, inset 0 0 30px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
+        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 60% { transform: translate(3px, 3px); } 80% { transform: translate(3px, -3px); } 100% { transform: translate(0); } }
+        @keyframes blackhole { 0% { box-shadow: inset 0 0 20px #000; transform: scale(1); } 50% { box-shadow: inset 0 0 100px #000; transform: scale(0.98); } 100% { box-shadow: inset 0 0 20px #000; transform: scale(1); } }
+        @keyframes shake-hard { 0% { transform: translate(1px, 1px); } 100% { transform: translate(-1px, -2px); } }
 
         /* --- ИНТЕРФЕЙС --- */
         header {
@@ -139,106 +131,106 @@
             box-shadow: 0 0 10px #ffd700; opacity: 0.8;
         }
 
+        /* --- УЛЬТРАБАН СТИЛЬ --- */
+        .app-item.ultra {
+            animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate;
+            border: 3px solid white;
+        }
+        .app-item.ultra img {
+            animation: hue-spin 1s linear infinite;
+            filter: contrast(150%);
+        }
+        .app-item.ultra span {
+            color: black;
+            font-weight: 900;
+            background: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
         /* --- СКИНЫ --- */
         .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
-        .skin-paper .app-item { background: #e8e0c5; border: 1px solid #c0b393; border-radius: 2px; }
-        .skin-paper .app-item span { color: #5a4a32; font-family: 'Courier New', monospace; font-weight: bold; }
+        .skin-paper .app-item:not(.ultra) { background: #e8e0c5; border: 1px solid #c0b393; border-radius: 2px; }
+        .skin-paper .app-item:not(.ultra) span { color: #5a4a32; font-family: 'Courier New', monospace; font-weight: bold; }
         .skin-paper .center-line { background: #ff0000; width: 2px; }
 
         .skin-retro { border: 4px outset #ccc; background: #008080; }
-        .skin-retro .app-item { background: #c0c0c0; border: 2px outset #fff; border-radius: 0; }
-        .skin-retro .app-item span { color: black; font-family: Tahoma, sans-serif; }
+        .skin-retro .app-item:not(.ultra) { background: #c0c0c0; border: 2px outset #fff; border-radius: 0; }
+        .skin-retro .app-item:not(.ultra) span { color: black; font-family: Tahoma, sans-serif; }
         .skin-retro .center-line { background: #000080; width: 3px; }
 
         .skin-matrix { border: 2px solid #0f0; background: #000; box-shadow: 0 0 15px #0f0; }
-        .skin-matrix .app-item { background: #050505; border: 1px solid #003300; }
-        .skin-matrix .app-item span { color: #0f0; text-shadow: 0 0 5px #0f0; font-family: monospace; }
+        .skin-matrix .app-item:not(.ultra) { background: #050505; border: 1px solid #003300; }
+        .skin-matrix .app-item:not(.ultra) span { color: #0f0; text-shadow: 0 0 5px #0f0; font-family: monospace; }
         .skin-matrix .center-line { background: #0f0; box-shadow: 0 0 20px #0f0; }
 
         .skin-ussr { border: 4px solid #d32f2f; background: #2b0c0c; }
-        .skin-ussr .app-item { background: #d32f2f; border: 2px solid #ffcc00; border-radius: 0; }
-        .skin-ussr .app-item span { color: #ffcc00; font-weight: bold; text-transform: uppercase; }
+        .skin-ussr .app-item:not(.ultra) { background: #d32f2f; border: 2px solid #ffcc00; border-radius: 0; }
+        .skin-ussr .app-item:not(.ultra) span { color: #ffcc00; font-weight: bold; text-transform: uppercase; }
         .skin-ussr .center-line { background: #ffcc00; width: 5px; }
 
         .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; background: #000; }
-        .skin-neon .app-item { background: rgba(0, 243, 255, 0.05); border: 1px solid #00f3ff; }
-        .skin-neon .app-item span { color: #00f3ff; }
+        .skin-neon .app-item:not(.ultra) { background: rgba(0, 243, 255, 0.05); border: 1px solid #00f3ff; }
+        .skin-neon .app-item:not(.ultra) span { color: #00f3ff; }
         .skin-neon .center-line { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
 
         .skin-gold { border: 3px solid #ffd700; animation: pulse-gold 2s infinite; background: #1a1a1a; }
-        .skin-gold .app-item { background: linear-gradient(135deg, #333, #000); border: 1px solid #ffd700; }
-        .skin-gold .app-item span { color: #ffd700; }
+        .skin-gold .app-item:not(.ultra) { background: linear-gradient(135deg, #333, #000); border: 1px solid #ffd700; }
+        .skin-gold .app-item:not(.ultra) span { color: #ffd700; }
         .skin-gold .center-line { background: #fff; box-shadow: 0 0 20px #fff; }
 
         .skin-lava { border: 4px solid #ff4500; background: linear-gradient(45deg, #ff0000, #ff4500); }
-        .skin-lava .app-item { background: rgba(0,0,0,0.6); border: 1px solid #ff4500; }
-        .skin-lava .app-item span { color: #ffae00; font-weight: bold; }
+        .skin-lava .app-item:not(.ultra) { background: rgba(0,0,0,0.6); border: 1px solid #ff4500; }
+        .skin-lava .app-item:not(.ultra) span { color: #ffae00; font-weight: bold; }
         .skin-lava .center-line { background: #ffff00; box-shadow: 0 0 15px #ff4500; }
 
         .skin-ice { border: 4px solid #a5f2f3; background: #e0f7fa; box-shadow: 0 0 20px #a5f2f3; }
-        .skin-ice .app-item { background: rgba(255,255,255,0.8); border: 1px solid #00bcd4; }
-        .skin-ice .app-item span { color: #006064; font-weight: bold; }
+        .skin-ice .app-item:not(.ultra) { background: rgba(255,255,255,0.8); border: 1px solid #00bcd4; }
+        .skin-ice .app-item:not(.ultra) span { color: #006064; font-weight: bold; }
         
         .skin-glitch { border: 2px solid white; background: #111; animation: glitch 0.3s infinite; }
-        .skin-glitch .app-item { background: #222; border: 1px dashed white; }
-        .skin-glitch .app-item span { color: white; text-decoration: line-through; }
+        .skin-glitch .app-item:not(.ultra) { background: #222; border: 1px dashed white; }
+        .skin-glitch .app-item:not(.ultra) span { color: white; text-decoration: line-through; }
         
         .skin-rgb { border: 5px solid red; animation: rainbow 2s linear infinite; background: #000; }
-        .skin-rgb .app-item { background: #111; border: 1px solid #333; }
-        .skin-rgb .app-item span { color: white; }
+        .skin-rgb .app-item:not(.ultra) { background: #111; border: 1px solid #333; }
+        .skin-rgb .app-item:not(.ultra) span { color: white; }
         
         .skin-oil { border: 5px solid #000; background: #1c1c1c; box-shadow: inset 0 0 50px #000; }
-        .skin-oil .app-item { background: linear-gradient(to bottom, #333, #000); border: 1px solid #444; }
-        .skin-oil .app-item span { color: #888; }
+        .skin-oil .app-item:not(.ultra) { background: linear-gradient(to bottom, #333, #000); border: 1px solid #444; }
+        .skin-oil .app-item:not(.ultra) span { color: #888; }
         .skin-oil .center-line { background: #000; width: 6px; border: 1px solid #333; }
 
         .skin-space { border: 3px solid #9c27b0; background: radial-gradient(circle, #311b92 0%, #000000 100%); box-shadow: 0 0 30px #9c27b0; }
-        .skin-space .app-item { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
-        .skin-space .app-item span { color: #e1bee7; }
+        .skin-space .app-item:not(.ultra) { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+        .skin-space .app-item:not(.ultra) span { color: #e1bee7; }
 
         .skin-illuminati { border: 3px double #33ff00; background: #001a00; }
-        .skin-illuminati .app-item { background: #000; border: 1px solid #33ff00; transform: rotate(1deg); }
+        .skin-illuminati .app-item:not(.ultra) { background: #000; border: 1px solid #33ff00; transform: rotate(1deg); }
         .skin-illuminati .center-line { background: #33ff00; width: 1px; box-shadow: 0 0 50px #33ff00; }
 
-        /* БОЖЕСТВЕННЫЕ СКИНЫ */
-        .skin-blackhole { 
-            border: none; background: #000; animation: blackhole 5s infinite; 
-            box-shadow: 0 0 50px #000;
-        }
-        .skin-blackhole .app-item { background: #000; border: 1px solid #222; border-radius: 50%; transform: scale(0.9); }
-        .skin-blackhole .app-item span { color: #444; font-size: 8px; }
+        .skin-blackhole { border: none; background: #000; animation: blackhole 5s infinite; box-shadow: 0 0 50px #000; }
+        .skin-blackhole .app-item:not(.ultra) { background: #000; border: 1px solid #222; border-radius: 50%; transform: scale(0.9); }
+        .skin-blackhole .app-item:not(.ultra) span { color: #444; font-size: 8px; }
         .skin-blackhole .center-line { background: white; width: 1px; box-shadow: 0 0 20px white; }
 
-        .skin-multiverse { 
-            border: 5px dashed #ff00ff; background: url('https://media.giphy.com/media/26tOZ42Mg6pbTUPvy/giphy.gif'); /* Абстракция */
-            background-size: cover;
-        }
-        .skin-multiverse .app-item { background: rgba(255,255,255,0.2); border: 2px solid white; backdrop-filter: blur(5px); }
-        .skin-multiverse .app-item span { color: white; text-shadow: 2px 2px 0 #000; }
+        .skin-multiverse { border: 5px dashed #ff00ff; background: url('https://media.giphy.com/media/26tOZ42Mg6pbTUPvy/giphy.gif'); background-size: cover; }
+        .skin-multiverse .app-item:not(.ultra) { background: rgba(255,255,255,0.2); border: 2px solid white; backdrop-filter: blur(5px); }
+        .skin-multiverse .app-item:not(.ultra) span { color: white; text-shadow: 2px 2px 0 #000; }
 
         .skin-timelord { border: 5px double #c0a062; background: #161005; box-shadow: inset 0 0 100px #524220; }
-        .skin-timelord .app-item { border: 1px solid #c0a062; background: transparent; transform: skewX(-10deg); }
-        .skin-timelord .app-item span { color: #c0a062; letter-spacing: 2px; }
+        .skin-timelord .app-item:not(.ultra) { border: 1px solid #c0a062; background: transparent; transform: skewX(-10deg); }
+        .skin-timelord .app-item:not(.ultra) span { color: #c0a062; letter-spacing: 2px; }
 
         .skin-admin { border: 5px solid white; background: #fff; box-shadow: 0 0 100px white; }
-        .skin-admin .app-item { background: white; border: 2px solid #ddd; }
-        .skin-admin .app-item span { color: #000; font-weight: 900; }
+        .skin-admin .app-item:not(.ultra) { background: white; border: 2px solid #ddd; }
+        .skin-admin .app-item:not(.ultra) span { color: #000; font-weight: 900; }
         .skin-admin .center-line { background: #000; width: 5px; }
 
-        /* ВЛАСТЕЛИН ИНТЕРНЕТА */
-        .skin-the-end { 
-            border: 10px solid #ff0000; 
-            background: #000; 
-            animation: shake-hard 0.2s infinite; 
-            box-shadow: 0 0 100px red, inset 0 0 100px red;
-        }
-        .skin-the-end .app-item { 
-            background: #200000; 
-            border: 2px solid red; 
-            filter: contrast(200%) grayscale(100%); 
-        }
-        .skin-the-end .app-item img { filter: invert(1); }
-        .skin-the-end .app-item span { color: red; font-family: 'Courier New'; text-transform: uppercase; }
+        .skin-the-end { border: 10px solid #ff0000; background: #000; animation: shake-hard 0.2s infinite; box-shadow: 0 0 100px red, inset 0 0 100px red; }
+        .skin-the-end .app-item:not(.ultra) { background: #200000; border: 2px solid red; filter: contrast(200%) grayscale(100%); }
+        .skin-the-end .app-item:not(.ultra) img { filter: invert(1); }
+        .skin-the-end .app-item:not(.ultra) span { color: red; font-family: 'Courier New'; text-transform: uppercase; }
         .skin-the-end .center-line { background: red; width: 10px; box-shadow: 0 0 50px red; }
 
         /* --- UI ЭЛЕМЕНТЫ --- */
@@ -430,19 +422,29 @@
                 rknAudio.play().catch(e => console.log("Нужен клик для музыки"));
             }
 
-            // --- НОВАЯ ЛОГИКА ГЕНЕРАЦИИ (РАНДОМ) ---
+            // --- НОВАЯ ЛОГИКА ГЕНЕРАЦИИ С УЛЬТРАБАНОМ ---
             for(let i=0; i<50; i++) {
-                // Создаем копию списка и перемешиваем её перед добавлением
                 let batch = [...apps];
                 batch.sort(() => Math.random() - 0.5);
                 
+                // Внедрение УЛЬТРАБАНА (шанс 0.5% на каждый элемент)
+                batch = batch.map(app => {
+                    if(Math.random() < 0.005) { // 0.5% шанс
+                        return { 
+                            name: "УЛЬТРАБАН", 
+                            img: "logo.png", // Используем лого РКН
+                            isUltra: true 
+                        };
+                    }
+                    return app;
+                });
+
                 rouletteList = rouletteList.concat(batch);
             }
-            // ----------------------------------------
             
             rouletteList.forEach(app => {
                 const div = document.createElement('div');
-                div.className = 'app-item';
+                div.className = 'app-item' + (app.isUltra ? ' ultra' : '');
                 div.innerHTML = `<img src="${app.img}"><span>${app.name}</span>`;
                 track.appendChild(div);
             });
@@ -472,9 +474,33 @@
         }
 
         function showActionChoice(app) {
+            // ЕСЛИ ВЫПАЛ УЛЬТРАБАН
+            if(app.isUltra) {
+                triggerUltraReward();
+                return;
+            }
+
             document.getElementById('selectedAppImg').src = app.img;
             document.getElementById('selectedAppName').innerText = app.name;
             document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        function triggerUltraReward() {
+            // Расчет награды: (Макс. бан 200к * 32 сервиса) * Множитель скина
+            const basePool = 200000 * 32; 
+            
+            const skinData = shopItems.find(i => i.id === currentSkinId);
+            const multiplier = skinData ? skinData.mult : 1;
+            
+            currentWinAmount = basePool * multiplier;
+
+            const stamp = document.getElementById('resultStamp');
+            stamp.innerText = "УЛЬТРАБАН";
+            stamp.style.background = "linear-gradient(45deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)";
+            stamp.style.animation = "hue-spin 1s linear infinite";
+
+            document.getElementById('moneyText').innerText = currentWinAmount.toLocaleString() + ' ₽';
+            document.getElementById('rewardModal').style.display = 'flex';
         }
 
         function chooseAction(type) {
@@ -482,6 +508,8 @@
             
             const stamp = document.getElementById('resultStamp');
             stamp.innerText = type;
+            stamp.style.animation = "none"; // Сброс анимации ультрабана
+            
             if(type === 'ЗАБАНЕНО') stamp.style.background = '#c0392b';
             if(type === 'ЗАМЕДЛЕНО') stamp.style.background = '#9da631';
             if(type === 'ОГРАНИЧИТЬ') stamp.style.background = '#e67e22';
