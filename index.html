@@ -575,15 +575,15 @@
 
         // --- PRESTIGE ---
         function doPrestige() {
-            if(balance < 1000000000000) { alert("Нужно накопить 1 Триллион!"); return; }
-            if(confirm("Вы уверены? Весь прогресс сбросится (включая скин), но вы получите Очки Коррупции.")) {
+            if(balance < 1000000000000) { alert("Нужно накопит 1 Триллион!"); return; }
+            if(confirm("Вы уверены? Весь прогресс сбросится (включая ВСЕ КУПЛЕННЫЕ СКИНЫ), но вы получите Очки Коррупции.")) {
                 corruption += 10; // +10 очков
                 balance = 0;
                 afkInventory = {};
                 techInventory = [];
-                // СБРОС СКИНА:
-                currentSkinId = 'default'; 
-                localStorage.setItem('rkn_skin', 'default');
+                // ПОЛНЫЙ СБРОС ИНВЕНТАРЯ И СКИНА
+                inventory = ['default'];
+                currentSkinId = 'default';
                 
                 saveGame();
                 location.reload();
@@ -619,6 +619,7 @@
             localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
             localStorage.setItem('rkn_afk', JSON.stringify(afkInventory));
             localStorage.setItem('rkn_tech', JSON.stringify(techInventory));
+            localStorage.setItem('rkn_skin', currentSkinId); // Исправлено сохранение текущего скина
             localStorage.setItem('rkn_last_time', Date.now());
         }
 
