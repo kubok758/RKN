@@ -30,6 +30,11 @@
         @keyframes hue-spin { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
         @keyframes ultra-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes vpn-pulse { 0% { box-shadow: 0 0 5px red; } 50% { box-shadow: 0 0 15px red; } 100% { box-shadow: 0 0 5px red; } }
+        @keyframes rainbow { 0% { border-color: red; box-shadow: 0 0 20px red; } 100% { border-color: blue; box-shadow: 0 0 20px blue; } }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
+        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 100% { transform: translate(0); } }
+        @keyframes blackhole { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
+        @keyframes shake-hard { 0% { transform: translate(1px, 1px); } 100% { transform: translate(-1px, -2px); } }
 
         /* --- ИНТЕРФЕЙС --- */
         header {
@@ -88,7 +93,104 @@
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); opacity: 0.9; border-radius: 2px;
         }
 
-        /* --- СКИН LIQUID GLASS (VIP) --- */
+        /* --- ВОССТАНОВЛЕННЫЕ СТИЛИ СКИНОВ --- */
+        
+        /* Paper */
+        .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
+        .skin-paper .app-item:not(.ultra) { background: #e8e0c5; border: 1px solid #c0b393; }
+        .skin-paper .app-item:not(.ultra) span { color: #5a4a32; font-family: monospace; font-weight: bold; }
+        .skin-paper .center-line { background: red; width: 2px; }
+
+        /* Retro */
+        .skin-retro { border: 4px outset #ccc; background: #008080; }
+        .skin-retro .app-item:not(.ultra) { background: #c0c0c0; border: 2px outset #fff; border-radius: 0; }
+        .skin-retro .app-item:not(.ultra) span { color: black; font-family: Tahoma; }
+        .skin-retro .center-line { background: #000080; }
+
+        /* Matrix */
+        .skin-matrix { border: 2px solid #0f0; background: #000; box-shadow: 0 0 15px #0f0; }
+        .skin-matrix .app-item:not(.ultra) { background: #050505; border: 1px solid #003300; }
+        .skin-matrix .app-item:not(.ultra) span { color: #0f0; font-family: monospace; }
+        .skin-matrix .center-line { background: #0f0; box-shadow: 0 0 20px #0f0; }
+
+        /* USSR */
+        .skin-ussr { border: 4px solid #d32f2f; background: #2b0c0c; }
+        .skin-ussr .app-item:not(.ultra) { background: #d32f2f; border: 2px solid #ffcc00; border-radius: 0; }
+        .skin-ussr .app-item:not(.ultra) span { color: #ffcc00; font-weight: bold; }
+        .skin-ussr .center-line { background: #ffcc00; width: 5px; }
+
+        /* Neon */
+        .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; background: #000; }
+        .skin-neon .app-item:not(.ultra) { background: rgba(0, 243, 255, 0.05); border: 1px solid #00f3ff; }
+        .skin-neon .app-item:not(.ultra) span { color: #00f3ff; }
+        .skin-neon .center-line { background: #ff00ff; box-shadow: 0 0 15px #ff00ff; }
+
+        /* Gold */
+        .skin-gold { border: 3px solid #ffd700; animation: pulse-gold 2s infinite; background: #1a1a1a; }
+        .skin-gold .app-item:not(.ultra) { background: linear-gradient(135deg, #333, #000); border: 1px solid #ffd700; }
+        .skin-gold .app-item:not(.ultra) span { color: #ffd700; }
+        .skin-gold .center-line { background: white; box-shadow: 0 0 20px white; }
+
+        /* Lava */
+        .skin-lava { border: 4px solid #ff4500; background: linear-gradient(45deg, #ff0000, #ff4500); }
+        .skin-lava .app-item:not(.ultra) { background: rgba(0,0,0,0.6); border: 1px solid #ff4500; }
+        .skin-lava .app-item:not(.ultra) span { color: #ffae00; font-weight: bold; }
+        .skin-lava .center-line { background: #ffff00; }
+
+        /* Ice */
+        .skin-ice { border: 4px solid #a5f2f3; background: #e0f7fa; box-shadow: 0 0 20px #a5f2f3; }
+        .skin-ice .app-item:not(.ultra) { background: rgba(255,255,255,0.8); border: 1px solid #00bcd4; }
+        .skin-ice .app-item:not(.ultra) span { color: #006064; font-weight: bold; }
+        
+        /* Glitch */
+        .skin-glitch { border: 2px solid white; background: #111; animation: glitch 0.3s infinite; }
+        .skin-glitch .app-item:not(.ultra) { background: #222; border: 1px dashed white; }
+        .skin-glitch .app-item:not(.ultra) span { color: white; text-decoration: line-through; }
+        
+        /* RGB */
+        .skin-rgb { border: 5px solid red; animation: rainbow 2s linear infinite; background: #000; }
+        .skin-rgb .app-item:not(.ultra) { background: #111; border: 1px solid #333; }
+        .skin-rgb .app-item:not(.ultra) span { color: white; }
+        
+        /* Oil */
+        .skin-oil { border: 5px solid #000; background: #1c1c1c; box-shadow: inset 0 0 50px #000; }
+        .skin-oil .app-item:not(.ultra) { background: linear-gradient(to bottom, #333, #000); border: 1px solid #444; }
+        .skin-oil .app-item:not(.ultra) span { color: #888; }
+        .skin-oil .center-line { background: #000; border: 1px solid #333; }
+
+        /* Space */
+        .skin-space { border: 3px solid #9c27b0; background: radial-gradient(circle, #311b92 0%, #000000 100%); box-shadow: 0 0 30px #9c27b0; }
+        .skin-space .app-item:not(.ultra) { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+        .skin-space .app-item:not(.ultra) span { color: #e1bee7; }
+
+        /* Illuminati */
+        .skin-illuminati { border: 3px double #33ff00; background: #001a00; }
+        .skin-illuminati .app-item:not(.ultra) { background: #000; border: 1px solid #33ff00; transform: rotate(1deg); }
+        .skin-illuminati .center-line { background: #33ff00; width: 1px; box-shadow: 0 0 50px #33ff00; }
+
+        /* Blackhole */
+        .skin-blackhole { border: none; background: #000; animation: blackhole 5s infinite; box-shadow: 0 0 50px #000; }
+        .skin-blackhole .app-item:not(.ultra) { background: #000; border: 1px solid #222; border-radius: 50%; transform: scale(0.9); }
+        .skin-blackhole .app-item:not(.ultra) span { color: #444; font-size: 8px; }
+        .skin-blackhole .center-line { background: white; width: 1px; }
+
+        /* Multiverse */
+        .skin-multiverse { border: 5px dashed #ff00ff; background: url('https://media.giphy.com/media/26tOZ42Mg6pbTUPvy/giphy.gif'); background-size: cover; }
+        .skin-multiverse .app-item:not(.ultra) { background: rgba(255,255,255,0.2); border: 2px solid white; backdrop-filter: blur(5px); }
+        .skin-multiverse .app-item:not(.ultra) span { color: white; text-shadow: 2px 2px 0 #000; }
+
+        /* Timelord */
+        .skin-timelord { border: 5px double #c0a062; background: #161005; box-shadow: inset 0 0 100px #524220; }
+        .skin-timelord .app-item:not(.ultra) { border: 1px solid #c0a062; background: transparent; transform: skewX(-10deg); }
+        .skin-timelord .app-item:not(.ultra) span { color: #c0a062; letter-spacing: 2px; }
+
+        /* Admin */
+        .skin-admin { border: 5px solid white; background: #fff; box-shadow: 0 0 100px white; }
+        .skin-admin .app-item:not(.ultra) { background: white; border: 2px solid #ddd; }
+        .skin-admin .app-item:not(.ultra) span { color: #000; font-weight: 900; }
+        .skin-admin .center-line { background: #000; width: 5px; }
+
+        /* --- LIQUID GLASS (VIP) --- */
         .skin-liquid-glass {
             background: rgba(10, 10, 10, 0.4);
             backdrop-filter: blur(20px);
@@ -122,11 +224,6 @@
         .app-item.ultra { animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate; border: 3px solid white; z-index: 5; }
         .app-item.ultra img { animation: hue-spin 1s linear infinite; filter: contrast(150%); }
         .app-item.ultra span { color: black; font-weight: 900; background: white; padding: 2px 5px; border-radius: 4px; }
-
-        /* Другие скины */
-        .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; }
-        .skin-neon .app-item:not(.ultra) { border: 1px solid #00f3ff; color: #00f3ff; }
-        .skin-neon .center-line { background: #00f3ff; }
 
         /* --- UI ЭЛЕМЕНТЫ --- */
         .controls { display: flex; gap: 10px; width: 95%; max-width: 400px; justify-content: center; }
@@ -584,6 +681,7 @@
                 // ПОЛНЫЙ СБРОС ИНВЕНТАРЯ И СКИНА
                 inventory = ['default'];
                 currentSkinId = 'default';
+                localStorage.setItem('rkn_skin', 'default');
                 
                 saveGame();
                 location.reload();
@@ -619,7 +717,7 @@
             localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
             localStorage.setItem('rkn_afk', JSON.stringify(afkInventory));
             localStorage.setItem('rkn_tech', JSON.stringify(techInventory));
-            localStorage.setItem('rkn_skin', currentSkinId); // Исправлено сохранение текущего скина
+            localStorage.setItem('rkn_skin', currentSkinId);
             localStorage.setItem('rkn_last_time', Date.now());
         }
 
