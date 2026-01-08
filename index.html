@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>РКН - Симулятор блокировок</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0f0f11;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* --- ШАПКА --- */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            justify-content: center;
+            background: #151517;
+            border-bottom: 1px solid #333;
+        }
+
+        header img {
+            width: 40px;
+            height: 40px;
+        }
+
+        header div h1 {
+            font-size: 18px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ccc;
+        }
+
+        header div p {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
+        }
+
+        /* --- ЗАГОЛОВОК --- */
+        h2.main-title {
+            font-size: 22px;
+            margin: 40px 0 20px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* --- РУЛЕТКА --- */
+        .roulette-container {
+            position: relative;
+            width: 95%;
+            max-width: 600px;
+            height: 130px;
+            background: #1a1a1d;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #2a2a2d;
+            margin-bottom: 40px;
+            box-shadow: inset 0 0 20px #000;
+        }
+
+        .roulette-track {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            will-change: transform; /* Оптимизация анимации */
+        }
+
+        .app-item {
+            width: 100px; /* Ширина слота */
+            height: 90px;
+            background: #252528;
+            border-radius: 12px;
+            margin: 0 5px; /* Отступы между слотами */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            border: 1px solid #333;
+        }
+
+        .app-item img {
+            width: 45px;
+            height: 45px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .app-item span {
+            font-size: 11px;
+            color: #aaa;
+            text-align: center;
+            width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Центральная линия */
+        .center-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: #ffd700;
+            z-index: 10;
+            box-shadow: 0 0 15px #ffd700;
+            opacity: 0.8;
+        }
+
+        /* --- КНОПКА КРУТИТЬ --- */
+        .spin-btn {
+            background: #ffd700;
+            color: #111;
+            border: none;
+            padding: 18px 80px;
+            font-size: 20px;
+            font-weight: 900;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+            transition: transform 0.1s, box-shadow 0.2s;
+            text-transform: uppercase;
+        }
+
+        .spin-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .spin-btn:disabled {
+            background: #555;
+            color: #888;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* --- МОДАЛЬНЫЕ ОКНА --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none; /* Скрыто по умолчанию */
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-card {
+            background: #1e1e20;
+            padding: 25px;
+            border-radius: 24px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #333;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Окно действия (Выбор бана) */
+        .app-preview img {
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .app-preview h3 {
+            margin: 0 0 25px 0;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.1s;
+        }
+
+        .btn-restrict { background: #f57c00; box-shadow: 0 4px 0 #b35a00; }
+        .btn-slow { background: #afb42b; box-shadow: 0 4px 0 #82861e; }
+        .btn-ban { background: #d32f2f; box-shadow: 0 4px 0 #9a1f1f; }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none !important;
+        }
+
+        /* Окно награды */
+        .reward-card {
+            background: linear-gradient(135deg, #b71c1c 0%, #7f0000 100%);
+            border: 2px solid #ff5252;
+        }
+
+        .stamp {
+            border: 4px solid white;
+            display: inline-block;
+            padding: 5px 20px;
+            font-weight: 900;
+            font-size: 20px;
+            text-transform: uppercase;
+            transform: rotate(-6deg);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+        }
+        
+        /* Цвета штампа */
+        .stamp.banned { border-color: white; background: #d32f2f; color: white; }
+        .stamp.slowed { border-color: white; background: #afb42b; color: white; }
+        .stamp.restricted { border-color: white; background: #f57c00; color: white; }
+
+        .salary-desc {
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .money-amount {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 5px 0 25px 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .take-money-btn {
+            background: #ffd700;
+            color: #000;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 0 #b29700;
+        }
+        
+        .take-money-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        .more-btn {
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="logo.png" alt="RKN Logo">
+        <div>
+            <h1>РОСКОМНАДЗОР</h1>
+            <p>Симулятор принятия решений</p>
+        </div>
+    </header>
+
+    <h2 class="main-title">ЧТО ЗАПРЕТИМ СЕГОДНЯ?</h2>
+
+    <div class="roulette-container">
+        <div class="center-line"></div>
+        <div class="roulette-track" id="track">
+            </div>
+    </div>
+
+    <button id="spinBtn" class="spin-btn" onclick="spinRoulette()">КРУТИТЬ</button>
+
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal-card">
+            <div class="app-preview">
+                <img id="selectedAppImg" src="" alt="">
+                <h3 id="selectedAppName">App Name</h3>
+            </div>
+            <button class="action-btn btn-restrict" onclick="chooseAction('ОГРАНИЧЕНО')">ОГРАНИЧИТЬ</button>
+            <button class="action-btn btn-slow" onclick="chooseAction('ЗАМЕДЛЕНО')">ЗАМЕДЛИТЬ</button>
+            <button class="action-btn btn-ban" onclick="chooseAction('ЗАБАНЕНО')">ЗАБАНИТЬ</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rewardModal">
+        <div class="modal-card reward-card">
+            <div id="resultStamp" class="stamp">ЗАБАНЕНО</div>
+            <p class="salary-desc">Сегодня вы хорошо потрудились</p>
+            <h2 class="money-amount" id="moneyText">0 ₽</h2>
+            <p class="salary-desc" style="margin-top: -15px; margin-bottom: 25px;">ВАША ЗАРПЛАТА НА СЕГОДНЯ</p>
+            
+            <button class="take-money-btn" onclick="closeAll()">Забрать деньги</button>
+            <button class="more-btn" onclick="closeAll()">Крутить ещё</button>
+        </div>
+    </div>
+
+    <script>
+        // --- КОНФИГУРАЦИЯ ---
+        // Полный список сервисов
+        const apps = [
+            { name: "CapCut", img: "capcut.png" },
+            { name: "ChatGPT", img: "chatgpt.png" },
+            { name: "WhatsApp", img: "whatsapp.png" },
+            { name: "X (Twitter)", img: "x.png" },
+            { name: "Zoom", img: "zoom.png" },
+            { name: "Teams", img: "teams.png" },
+            { name: "TikTok", img: "tiktok.png" },
+            { name: "YouTube", img: "youtube.png" },
+            { name: "Discord", img: "discord.png" },
+            { name: "Telegram", img: "telegram.png" },
+            { name: "Instagram", img: "instagram.png" },
+            { name: "Facebook", img: "facebook.png" },
+            { name: "Twitch", img: "twitch.png" },
+            { name: "Spotify", img: "spotify.png" },
+            { name: "Netflix", img: "netflix.png" },
+            { name: "Steam", img: "steam.png" },
+            { name: "Roblox", img: "roblox.png" },
+            { name: "Pinterest", img: "pinterest.png" },
+            { name: "Reddit", img: "reddit.png" },
+            { name: "Snapchat", img: "snapchat.png" },
+            { name: "LinkedIn", img: "linkedin.png" },
+            { name: "GitHub", img: "github.png" },
+            { name: "Wikipedia", img: "wikipedia.png" },
+            { name: "Google", img: "google.png" },
+            { name: "Amazon", img: "amazon.png" },
+            { name: "Viber", img: "viber.png" },
+            { name: "Signal", img: "signal.png" },
+            { name: "Skype", img: "skype.png" },
+            { name: "SoundCloud", img: "soundcloud.png" },
+            { name: "Minecraft", img: "minecraft.png" },
+            { name: "Brawl Stars", img: "brawlstars.png" },
+            { name: "Likee", img: "likee.png" }
+        ];
+
+        // Настройки размеров
+        const CARD_WIDTH = 100; // Ширина карточки
+        const CARD_MARGIN = 10; // Сумма отступов (5px слева + 5px справа)
+        const SLOT_WIDTH = CARD_WIDTH + CARD_MARGIN; // Полный шаг
+        
+        const track = document.getElementById('track');
+        let isSpinning = false;
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        // Создаем "бесконечную" ленту. Повторяем список 30 раз, чтобы хватило на долгую прокрутку.
+        let rouletteContent = [];
+        for(let i=0; i<30; i++) {
+            rouletteContent = rouletteContent.concat(apps);
+        }
+
+        // Отрисовка ленты в HTML
+        rouletteContent.forEach(app => {
+            const div = document.createElement('div');
+            div.className = 'app-item';
+            div.innerHTML = `<img src="${app.img}"><span>${app.name}</span>`;
+            track.appendChild(div);
+        });
+
+        // --- ЛОГИКА ---
+
+        function spinRoulette() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+
+            // Выбираем случайный индекс остановки (где-то посередине ленты)
+            // Список длинный, берем диапазон от 300 до 600
+            const stopIndex = Math.floor(Math.random() * 300) + 300; 
+            const selectedApp = rouletteContent[stopIndex];
+
+            // Расчет позиции
+            // Центр контейнера (ширина контейнера ~600px, половина 300px)
+            // Центр элемента = (индекс * шаг) + (шаг / 2)
+            const containerCenter = document.querySelector('.roulette-container').offsetWidth / 2;
+            const itemCenter = (stopIndex * SLOT_WIDTH) + (SLOT_WIDTH / 2);
+            
+            // На сколько нужно сдвинуть ленту влево
+            const offset = -(itemCenter - containerCenter);
+
+            // Добавляем микро-рандом внутри слота (+- 15px), чтобы не всегда идеально по центру
+            const randomOffset = Math.floor(Math.random() * 30) - 15;
+            const finalTransform = offset + randomOffset;
+
+            // Запускаем анимацию (4.5 секунды)
+            track.style.transition = "transform 4.5s cubic-bezier(0.15, 0.9, 0.3, 1)";
+            track.style.transform = `translateX(${finalTransform}px)`;
+
+            // Когда анимация закончилась
+            setTimeout(() => {
+                showActionChoice(selectedApp);
+                isSpinning = false;
+                document.getElementById('spinBtn').disabled = false;
+            }, 4500);
+        }
+
+        function showActionChoice(app) {
+            document.getElementById('selectedAppImg').src = app.img;
+            document.getElementById('selectedAppName').innerText = app.name;
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        function chooseAction(actionType) {
+            document.getElementById('actionModal').style.display = 'none';
+            
+            // Обновляем штамп
+            const stamp = document.getElementById('resultStamp');
+            stamp.innerText = actionType;
+            stamp.className = 'stamp'; // Сброс классов
+            
+            if(actionType === 'ЗАБАНЕНО') stamp.classList.add('banned');
+            if(actionType === 'ЗАМЕДЛЕНО') stamp.classList.add('slowed');
+            if(actionType === 'ОГРАНИЧЕНО') stamp.classList.add('restricted');
+
+            // Генерация случайной суммы денег
+            // Чем жестче мера, тем больше денег (логика коррупции/премии)
+            let min = 0, max = 0;
+            
+            if(actionType === 'ОГРАНИЧЕНО') { min = 25000; max = 45000; }
+            if(actionType === 'ЗАМЕДЛЕНО') { min = 45000; max = 70000; }
+            if(actionType === 'ЗАБАНЕНО') { min = 75000; max = 120000; }
+
+            // Рандом в диапазоне
+            const rawMoney = Math.floor(Math.random() * (max - min + 1)) + min;
+            // Округляем до сотен (чтобы было красиво, типа 83 500)
+            const money = Math.ceil(rawMoney / 100) * 100;
+
+            document.getElementById('moneyText').innerText = money.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('rewardModal').style.display = 'flex';
+        }
+
+        function closeAll() {
+            document.getElementById('rewardModal').style.display = 'none';
+            
+            // Сбрасываем рулетку мгновенно (без анимации) в начало
+            // Чтобы в следующий раз снова крутилось
+            track.style.transition = "none";
+            track.style.transform = "translateX(0px)";
+        }
+    </script>
+</body>
+</html>
