@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>РКН - Симулятор блокировок</title>
+    <title>РКН - Симулятор Блокировок</title>
     <style>
-        /* ГЛАВНОЕ ИСПРАВЛЕНИЕ БАГА: */
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
+        /* ГЛОБАЛЬНЫЕ НАСТРОЙКИ */
+        *, *::before, *::after { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -25,7 +23,35 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- ШАПКА --- */
+        /* --- АНИМАЦИИ ДЛЯ СКИНОВ --- */
+        @keyframes rainbow { 
+            0% { border-color: red; box-shadow: 0 0 20px red; }
+            20% { border-color: yellow; box-shadow: 0 0 20px yellow; }
+            40% { border-color: lime; box-shadow: 0 0 20px lime; }
+            60% { border-color: cyan; box-shadow: 0 0 20px cyan; }
+            80% { border-color: magenta; box-shadow: 0 0 20px magenta; }
+            100% { border-color: red; box-shadow: 0 0 20px red; }
+        }
+        @keyframes gradient-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 10px #ffd700; }
+            50% { box-shadow: 0 0 30px #ffd700, inset 0 0 20px #ffd700; }
+            100% { box-shadow: 0 0 10px #ffd700; }
+        }
+
+        /* --- ИНТЕРФЕЙС --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -40,14 +66,8 @@
             height: 70px;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .header-left { display: flex; align-items: center; gap: 10px; }
         header img { width: 35px; height: 35px; }
-        
         .header-title h1 { font-size: 16px; margin: 0; color: #ccc; }
         .header-title p { font-size: 10px; color: #666; margin: 0; }
 
@@ -65,19 +85,12 @@
         }
 
         .spacer { height: 90px; }
+        h2.main-title { font-size: 20px; margin: 20px 0 30px 0; text-align: center; font-weight: bold; }
 
-        /* --- ЗАГОЛОВОК --- */
-        h2.main-title {
-            font-size: 20px;
-            margin: 20px 0 30px 0;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        /* --- РУЛЕТКА --- */
+        /* --- РУЛЕТКА (БАЗА) --- */
         .roulette-container {
             position: relative;
-            width: 95%; /* Адаптивная ширина */
+            width: 95%;
             max-width: 600px;
             height: 140px;
             background: #1a1a1d;
@@ -88,17 +101,10 @@
             transition: all 0.3s;
         }
 
-        .roulette-track {
-            display: flex;
-            height: 100%;
-            align-items: center;
-            will-change: transform;
-        }
+        .roulette-track { display: flex; height: 100%; align-items: center; will-change: transform; }
 
         .app-item {
-            /* Теперь ширина 100px включает в себя рамки. 
-               + 5px отступ слева + 5px отступ справа = 110px шаг */
-            width: 100px; 
+            width: 100px;
             height: 100px;
             background: #252528;
             border-radius: 15px;
@@ -111,140 +117,146 @@
             border: 1px solid #333;
             position: relative;
         }
-
-        .app-item img {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-
-        .app-item span {
-            font-size: 11px;
-            color: #aaa;
-            max-width: 90px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
+        .app-item img { width: 50px; height: 50px; margin-bottom: 8px; border-radius: 10px; object-fit: cover; }
+        .app-item span { font-size: 11px; color: #aaa; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
         .center-line {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 100%;
-            background: #ffd700;
-            z-index: 10;
-            box-shadow: 0 0 10px #ffd700;
-            opacity: 0.8;
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 100%; background: #ffd700; z-index: 10;
+            box-shadow: 0 0 10px #ffd700; opacity: 0.8;
         }
 
-        /* --- СКИНЫ --- */
-        .skin-gold { border: 3px solid #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
-        .skin-gold .app-item { background: linear-gradient(145deg, #2c2c2c, #1a1a1a); border: 1px solid #ffd700; }
-        .skin-gold .app-item span { color: #ffd700; }
-        .skin-gold .center-line { background: white; box-shadow: 0 0 15px white; }
+        /* --- СИСТЕМА СКИНОВ --- */
+        
+        /* 1. Бюрократия (Бумага) */
+        .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
+        .skin-paper .app-item { background: #e8e0c5; border: 1px solid #c0b393; border-radius: 2px; }
+        .skin-paper .app-item span { color: #5a4a32; font-family: 'Courier New', monospace; font-weight: bold; }
+        .skin-paper .center-line { background: #ff0000; width: 2px; }
 
-        .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; }
-        .skin-neon .app-item { background: rgba(0, 243, 255, 0.05); border: 1px solid #00f3ff; }
-        .skin-neon .app-item span { color: #00f3ff; }
-        .skin-neon .center-line { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; width: 6px; }
+        /* 2. Ретро (Windows 95) */
+        .skin-retro { border: 4px outset #ccc; background: #008080; }
+        .skin-retro .app-item { background: #c0c0c0; border: 2px outset #fff; border-radius: 0; }
+        .skin-retro .app-item span { color: black; font-family: Tahoma, sans-serif; }
+        .skin-retro .center-line { background: #000080; width: 3px; }
 
+        /* 3. Хакер (Матрица) */
+        .skin-matrix { border: 2px solid #0f0; background: #000; box-shadow: 0 0 15px #0f0; }
+        .skin-matrix .app-item { background: #050505; border: 1px solid #003300; }
+        .skin-matrix .app-item span { color: #0f0; text-shadow: 0 0 5px #0f0; font-family: monospace; }
+        .skin-matrix .center-line { background: #0f0; box-shadow: 0 0 20px #0f0; }
+
+        /* 4. СССР (Уже был) */
         .skin-ussr { border: 4px solid #d32f2f; background: #2b0c0c; }
         .skin-ussr .app-item { background: #d32f2f; border: 2px solid #ffcc00; border-radius: 0; }
-        .skin-ussr .app-item span { color: #ffcc00; font-weight: bold; }
+        .skin-ussr .app-item span { color: #ffcc00; font-weight: bold; text-transform: uppercase; }
         .skin-ussr .center-line { background: #ffcc00; width: 5px; }
 
-        /* --- КНОПКИ --- */
-        .controls {
-            display: flex;
-            gap: 15px;
-            width: 90%;
-            max-width: 400px;
-            justify-content: center;
-        }
+        /* 5. Неон (Киберпанк) */
+        .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; background: #000; }
+        .skin-neon .app-item { background: rgba(0, 243, 255, 0.05); border: 1px solid #00f3ff; }
+        .skin-neon .app-item span { color: #00f3ff; }
+        .skin-neon .center-line { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
 
+        /* 6. Золото (Luxury) */
+        .skin-gold { border: 3px solid #ffd700; animation: pulse-gold 2s infinite; background: #1a1a1a; }
+        .skin-gold .app-item { background: linear-gradient(135deg, #333, #000); border: 1px solid #ffd700; }
+        .skin-gold .app-item span { color: #ffd700; }
+        .skin-gold .center-line { background: #fff; box-shadow: 0 0 20px #fff; }
+
+        /* 7. Лава (Анимация) */
+        .skin-lava { 
+            border: 4px solid #ff4500; 
+            background: linear-gradient(45deg, #ff0000, #ff4500, #8b0000);
+            background-size: 200% 200%;
+            animation: gradient-bg 3s ease infinite;
+        }
+        .skin-lava .app-item { background: rgba(0,0,0,0.6); border: 1px solid #ff4500; }
+        .skin-lava .app-item span { color: #ffae00; font-weight: bold; }
+        .skin-lava .center-line { background: #ffff00; box-shadow: 0 0 15px #ff4500; }
+
+        /* 8. Лёд (Frozen) */
+        .skin-ice { border: 4px solid #a5f2f3; background: #e0f7fa; box-shadow: 0 0 20px #a5f2f3; }
+        .skin-ice .app-item { background: rgba(255,255,255,0.8); border: 1px solid #00bcd4; }
+        .skin-ice .app-item span { color: #006064; font-weight: bold; }
+        
+        /* 9. Глюк (Glitch) */
+        .skin-glitch { border: 2px solid white; background: #111; animation: glitch 0.3s infinite; }
+        .skin-glitch .app-item { background: #222; border: 1px dashed white; }
+        .skin-glitch .app-item span { color: white; text-decoration: line-through; }
+        
+        /* 10. RGB Gamer */
+        .skin-rgb { border: 5px solid red; animation: rainbow 2s linear infinite; background: #000; }
+        .skin-rgb .app-item { background: #111; border: 1px solid #333; }
+        .skin-rgb .app-item span { color: white; }
+        
+        /* 11. Нефтяной магнат */
+        .skin-oil { border: 5px solid #000; background: #1c1c1c; box-shadow: inset 0 0 50px #000; }
+        .skin-oil .app-item { background: linear-gradient(to bottom, #333, #000); border: 1px solid #444; }
+        .skin-oil .app-item span { color: #888; }
+        .skin-oil .center-line { background: #000; width: 6px; border: 1px solid #333; }
+
+        /* 12. Космос (Galaxy) */
+        .skin-space { 
+            border: 3px solid #9c27b0; 
+            background: radial-gradient(circle, #311b92 0%, #000000 100%);
+            box-shadow: 0 0 30px #9c27b0;
+        }
+        .skin-space .app-item { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+        .skin-space .app-item span { color: #e1bee7; }
+
+        /* 13. Иллюминаты */
+        .skin-illuminati { border: 3px double #33ff00; background: #001a00; }
+        .skin-illuminati .app-item { background: #000; border: 1px solid #33ff00; transform: rotate(1deg); }
+        .skin-illuminati .center-line { background: #33ff00; width: 1px; box-shadow: 0 0 50px #33ff00; }
+
+        /* --- UI ЭЛЕМЕНТЫ --- */
+        .controls { display: flex; gap: 15px; width: 90%; max-width: 400px; justify-content: center; }
+        
         .btn {
-            border: none;
-            padding: 15px 0;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: transform 0.1s;
-            flex: 1; /* Растягиваем кнопки равномерно */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border: none; padding: 15px 0; font-size: 16px; font-weight: bold; border-radius: 12px;
+            cursor: pointer; text-transform: uppercase; transition: transform 0.1s; flex: 1;
+            display: flex; justify-content: center; align-items: center;
         }
         .btn:active { transform: scale(0.95); }
 
-        .spin-btn {
-            background: #444; /* Серый цвет как на скрине */
-            color: #aaa;
-            font-size: 18px;
-        }
-        /* Активируем кнопку только когда можно крутить */
-        .spin-btn.active {
-            background: #ffd700;
-            color: black;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .shop-btn {
-            background: #4285f4; /* Синий как на скрине */
-            color: white;
-            box-shadow: 0 0 20px rgba(66, 133, 244, 0.3);
-        }
+        .spin-btn { background: #444; color: #aaa; font-size: 18px; }
+        .spin-btn.active { background: #ffd700; color: black; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        .shop-btn { background: #4285f4; color: white; box-shadow: 0 0 20px rgba(66, 133, 244, 0.3); }
 
         /* --- МОДАЛКИ --- */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(5px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); display: none;
+            justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px);
         }
 
         .modal-card {
-            background: #1e1e20;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            width: 90%;
-            max-width: 320px;
-            border: 1px solid #333;
-            animation: popIn 0.3s ease;
+            background: #1e1e20; padding: 25px; border-radius: 20px; text-align: center;
+            width: 90%; max-width: 350px; border: 1px solid #333; animation: popIn 0.3s ease;
         }
         @keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
 
         .app-preview img { width: 90px; height: 90px; border-radius: 20px; margin-bottom: 15px; }
         .app-preview h3 { font-size: 22px; margin: 0 0 20px 0; }
         
-        .action-btn { width: 100%; padding: 14px; margin-bottom: 10px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; font-size: 14px; }
-        .btn-restrict { background: #e67e22; box-shadow: 0 4px #a85d1b; }
-        .btn-slow { background: #9da631; box-shadow: 0 4px #707524; }
-        .btn-ban { background: #c0392b; box-shadow: 0 4px #8a291f; }
-        .action-btn:active { transform: translateY(4px); box-shadow: none; }
+        .action-btn { width: 100%; padding: 14px; margin-bottom: 10px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; }
+        .btn-restrict { background: #e67e22; }
+        .btn-slow { background: #9da631; }
+        .btn-ban { background: #c0392b; }
 
-        .take-btn { background: #ffd700; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; font-size: 16px; }
+        .take-btn { background: #ffd700; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
 
-        /* Магазин */
-        .shop-list { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; text-align: left; margin-bottom: 15px; }
-        .shop-item { background: #2a2a2d; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #444; }
+        /* Магазин Стили */
+        .shop-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 15px; }
+        .shop-item { 
+            background: #2a2a2d; padding: 12px; border-radius: 12px; 
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #444; 
+        }
+        .shop-item-info { display: flex; flex-direction: column; gap: 3px; }
+        .item-mult { color: #00e676; font-size: 11px; font-weight: bold; }
         .buy-btn { background: #4caf50; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .buy-btn.equipped { background: #ffd700; color: black; cursor: default; }
-
     </style>
 </head>
 <body>
@@ -263,7 +275,6 @@
     </header>
 
     <div class="spacer"></div>
-
     <h2 class="main-title">ЧТО ЗАПРЕТИМ СЕГОДНЯ?</h2>
 
     <div class="roulette-container" id="rouletteBox">
@@ -292,21 +303,20 @@
         <div class="modal-card" style="background: linear-gradient(135deg, #a32222, #7f1a1a); border: 1px solid #ff5252;">
             <div id="resultStamp" style="border: 3px solid white; display: inline-block; padding: 5px 15px; font-weight: bold; font-size: 20px; transform: rotate(-5deg); margin-bottom: 20px; background: #d32f2f;">ЗАБАНЕНО</div>
             <p style="font-size: 12px; color: #ddd; margin: 0;">Бюджет пополнен на</p>
-            <h2 id="moneyText" style="font-size: 36px; margin: 10px 0 25px 0;">0 ₽</h2>
+            <h2 id="moneyText" style="font-size: 32px; margin: 10px 0 25px 0;">0 ₽</h2>
             <button class="take-btn" onclick="collectMoney()">Забрать в бюджет</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="shopModal">
-        <div class="modal-card" style="max-width: 380px;">
-            <h2 style="margin: 0 0 15px 0;">Магазин</h2>
+        <div class="modal-card" style="max-width: 400px;">
+            <h2 style="margin: 0 0 15px 0;">Госзакупки</h2>
             <div class="shop-list" id="shopList"></div>
             <button class="btn" style="background: transparent; border: 1px solid #555; color: #aaa; width: 100%; padding: 10px;" onclick="closeShop()">Закрыть</button>
         </div>
     </div>
 
     <script>
-        // СПИСОК СЕРВИСОВ
         const apps = [
             { name: "CapCut", img: "capcut.png" }, { name: "ChatGPT", img: "chatgpt.png" },
             { name: "WhatsApp", img: "whatsapp.png" }, { name: "X (Twitter)", img: "x.png" },
@@ -326,24 +336,43 @@
             { name: "Brawl Stars", img: "brawlstars.png" }, { name: "Likee", img: "likee.png" }
         ];
 
-        // ТОВАРЫ
+        // --- РАСШИРЕННЫЙ СПИСОК ТОВАРОВ (24 шт) ---
         const shopItems = [
-            { id: 'default', name: 'Стандарт', price: 0, desc: 'Обычный вид' },
-            { id: 'gold', name: 'Luxury Gold', price: 500000, desc: 'Золото и богатство', class: 'skin-gold' },
-            { id: 'neon', name: 'Cyberpunk', price: 1500000, desc: 'Неоновый стиль', class: 'skin-neon' },
-            { id: 'ussr', name: 'Soviet Power', price: 5000000, desc: 'Строгий режим', class: 'skin-ussr' }
+            // Tier 1: Дешевые
+            { id: 'default', name: 'Стандарт', price: 0, mult: 1, desc: 'Обычный вид' },
+            { id: 'paper', name: 'Бюрократия', price: 50000, mult: 1.2, desc: 'Завалено бумагами', class: 'skin-paper' },
+            { id: 'retro', name: 'Windows 95', price: 150000, mult: 1.5, desc: 'Старая школа', class: 'skin-retro' },
+            { id: 'dark', name: 'Ночной режим', price: 250000, mult: 1.8, desc: 'Темная тема', class: 'skin-oil' }, 
+
+            // Tier 2: Средние
+            { id: 'ice', name: 'Ледниковый период', price: 500000, mult: 2.5, desc: 'Полная заморозка', class: 'skin-ice' },
+            { id: 'matrix', name: 'Хакер', price: 800000, mult: 3.0, desc: 'Ты в системе', class: 'skin-matrix' },
+            { id: 'ussr', name: 'Советская власть', price: 1000000, mult: 3.5, desc: 'Железный занавес', class: 'skin-ussr' },
+            
+            // Tier 3: Дорогие с эффектами
+            { id: 'neon', name: 'Cyber RKN', price: 2000000, mult: 5.0, desc: 'Будущее наступило', class: 'skin-neon' },
+            { id: 'gold', name: 'Luxury Gold', price: 5000000, mult: 8.0, desc: 'Пульсирующее золото', class: 'skin-gold' },
+            { id: 'glitch', name: 'Критический сбой', price: 10000000, mult: 10.0, desc: 'Система сломана', class: 'skin-glitch' },
+            
+            // Tier 4: Элитные
+            { id: 'lava', name: 'Адский огонь', price: 25000000, mult: 15.0, desc: 'Сжигает бюджет', class: 'skin-lava' },
+            { id: 'rgb', name: 'RGB Геймер', price: 50000000, mult: 20.0, desc: 'Максимальный FPS', class: 'skin-rgb' },
+            { id: 'oil', name: 'Нефтяной магнат', price: 100000000, mult: 25.0, desc: 'Черное золото', class: 'skin-oil' },
+
+            // Tier 5: Легендарные
+            { id: 'space', name: 'Галактика', price: 500000000, mult: 35.0, desc: 'Блокируем планеты', class: 'skin-space' },
+            { id: 'illuminati', name: 'Тайное правительство', price: 1000000000, mult: 50.0, desc: 'Всевидящее око', class: 'skin-illuminati' }
         ];
 
-        // ПЕРЕМЕННЫЕ
         let balance = parseInt(localStorage.getItem('rkn_balance')) || 0;
         let inventory = JSON.parse(localStorage.getItem('rkn_inventory')) || ['default'];
-        let currentSkin = localStorage.getItem('rkn_skin') || 'default';
+        let currentSkinId = localStorage.getItem('rkn_skin') || 'default';
         let currentWinAmount = 0;
         
-        // КОНСТАНТЫ РАЗМЕРОВ (ВАЖНО!)
-        const CARD_WIDTH = 100; // Ширина карточки (включая рамки благодаря box-sizing: border-box)
-        const MARGIN_SIDE = 5;  // Отступ с одной стороны
-        const SLOT_WIDTH = CARD_WIDTH + (MARGIN_SIDE * 2); // Полный шаг: 100 + 5 + 5 = 110px
+        // Размеры
+        const CARD_WIDTH = 100; 
+        const MARGIN_SIDE = 5;  
+        const SLOT_WIDTH = CARD_WIDTH + (MARGIN_SIDE * 2);
 
         const track = document.getElementById('track');
         let isSpinning = false;
@@ -351,9 +380,8 @@
 
         function init() {
             updateBalanceUI();
-            applySkin(currentSkin);
+            applySkin(currentSkinId);
             
-            // Генерируем 50 повторений списка для "бесконечности"
             for(let i=0; i<50; i++) {
                 rouletteList = rouletteList.concat(apps);
             }
@@ -365,7 +393,6 @@
                 track.appendChild(div);
             });
         }
-        
         init();
 
         function spinRoulette() {
@@ -373,31 +400,21 @@
             isSpinning = true;
             document.getElementById('spinBtn').classList.remove('active');
 
-            // Выбираем случайный индекс в диапазоне от 500 до 1000 (чтобы крутилось долго)
             const stopIndex = Math.floor(Math.random() * 500) + 500; 
             const selectedApp = rouletteList[stopIndex];
 
-            // --- МАТЕМАТИКА ЦЕНТРИРОВАНИЯ ---
-            
-            // 1. Находим центр контейнера (экрана)
             const containerCenter = document.getElementById('rouletteBox').offsetWidth / 2;
-
-            // 2. Находим центр нужного элемента на ленте
-            // Позиция левого края элемента = (индекс * шаг) + отступ
             const itemLeftPos = (stopIndex * SLOT_WIDTH) + MARGIN_SIDE;
             const itemCenterPos = itemLeftPos + (CARD_WIDTH / 2);
-
-            // 3. Считаем смещение (надо сдвинуть ленту влево, поэтому минус)
             const offset = -(itemCenterPos - containerCenter);
 
-            // Запуск анимации
-            track.style.transition = "transform 5s cubic-bezier(0.1, 0.9, 0.2, 1)";
+            track.style.transition = "transform 4s cubic-bezier(0.1, 0.9, 0.2, 1)";
             track.style.transform = `translateX(${offset}px)`;
 
             setTimeout(() => {
                 showActionChoice(selectedApp);
                 isSpinning = false;
-            }, 5000);
+            }, 4000);
         }
 
         function showActionChoice(app) {
@@ -411,19 +428,21 @@
             
             const stamp = document.getElementById('resultStamp');
             stamp.innerText = type;
-            // Цвет штампа
             if(type === 'ЗАБАНЕНО') stamp.style.background = '#c0392b';
             if(type === 'ЗАМЕДЛЕНО') stamp.style.background = '#9da631';
             if(type === 'ОГРАНИЧИТЬ') stamp.style.background = '#e67e22';
 
-            // Генерация суммы
+            // Базовая награда
             let min = 20000, max = 50000;
             if(type === 'ЗАМЕДЛИТЬ') { min = 50000; max = 80000; }
             if(type === 'ЗАБАНИТЬ') { min = 100000; max = 200000; }
 
-            // Бонус скинов
-            if(currentSkin === 'gold') { min *= 1.5; max *= 1.5; }
-            if(currentSkin === 'ussr') { min *= 2; max *= 2; }
+            // ПРИМЕНЕНИЕ МНОЖИТЕЛЯ СКИНА
+            const skinData = shopItems.find(i => i.id === currentSkinId);
+            const multiplier = skinData ? skinData.mult : 1;
+
+            min *= multiplier;
+            max *= multiplier;
 
             const rawMoney = Math.floor(Math.random() * (max - min + 1)) + min;
             currentWinAmount = Math.ceil(rawMoney / 100) * 100;
@@ -439,9 +458,6 @@
             
             document.getElementById('rewardModal').style.display = 'none';
             document.getElementById('spinBtn').classList.add('active');
-
-            // МГНОВЕННЫЙ СБРОС В НАЧАЛО
-            // Чтобы не крутить назад, мы сбрасываем позицию в 0
             track.style.transition = "none";
             track.style.transform = "translateX(0px)";
         }
@@ -450,7 +466,7 @@
             document.getElementById('balanceDisplay').innerText = balance.toLocaleString();
         }
 
-        // --- МАГАЗИН ---
+        // --- МАГАЗИН ЛОГИКА ---
         function openShop() {
             const list = document.getElementById('shopList');
             list.innerHTML = '';
@@ -460,22 +476,23 @@
                 div.className = 'shop-item';
                 
                 const isOwned = inventory.includes(item.id);
-                const isEquipped = currentSkin === item.id;
+                const isEquipped = currentSkinId === item.id;
                 
                 let btnHtml = '';
                 if (isEquipped) {
-                    btnHtml = `<button class="buy-btn equipped">Выбрано</button>`;
+                    btnHtml = `<button class="buy-btn equipped">Надето</button>`;
                 } else if (isOwned) {
-                    btnHtml = `<button class="buy-btn" style="background:#2196f3" onclick="equip('${item.id}')">Надеть</button>`;
+                    btnHtml = `<button class="buy-btn" style="background:#2196f3" onclick="equip('${item.id}')">Выбрать</button>`;
                 } else {
                     btnHtml = `<button class="buy-btn" onclick="buy('${item.id}', ${item.price})">Купить</button>`;
                 }
 
                 div.innerHTML = `
-                    <div>
-                        <div style="font-weight:bold">${item.name}</div>
-                        <div style="font-size:11px; color:#888">${item.desc}</div>
-                        <div style="color:#ffd700; font-size:12px; margin-top:2px">${item.price > 0 ? item.price.toLocaleString() : 'Бесплатно'}</div>
+                    <div class="shop-item-info">
+                        <div style="font-weight:bold; font-size:15px;">${item.name}</div>
+                        <div style="font-size:11px; color:#aaa">${item.desc}</div>
+                        <div class="item-mult">Доход: x${item.mult}</div>
+                        <div style="color:#ffd700; font-size:13px; margin-top:2px">${item.price > 0 ? item.price.toLocaleString() : 'Бесплатно'}</div>
                     </div>
                     ${btnHtml}
                 `;
@@ -495,12 +512,12 @@
                 updateBalanceUI();
                 openShop();
             } else {
-                alert("Не хватает бюджета!");
+                alert("Не хватает средств! Нужно больше банить.");
             }
         }
 
         function equip(id) {
-            currentSkin = id;
+            currentSkinId = id;
             localStorage.setItem('rkn_skin', id);
             applySkin(id);
             openShop();
@@ -508,7 +525,7 @@
 
         function applySkin(id) {
             const box = document.getElementById('rouletteBox');
-            box.className = 'roulette-container'; // сброс
+            box.className = 'roulette-container'; // Сброс
             const item = shopItems.find(i => i.id === id);
             if(item && item.class) box.classList.add(item.class);
         }
