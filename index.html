@@ -50,11 +50,6 @@
             50% { box-shadow: inset 0 0 100px #000; transform: scale(0.98); }
             100% { box-shadow: inset 0 0 20px #000; transform: scale(1); }
         }
-        @keyframes god-glow {
-            0% { border-color: white; box-shadow: 0 0 50px white; }
-            50% { border-color: #ffd700; box-shadow: 0 0 100px #ffd700; }
-            100% { border-color: white; box-shadow: 0 0 50px white; }
-        }
         @keyframes shake-hard {
             0% { transform: translate(1px, 1px) rotate(0deg); }
             10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -144,7 +139,7 @@
             box-shadow: 0 0 10px #ffd700; opacity: 0.8;
         }
 
-        /* --- СТАРЫЕ СКИНЫ --- */
+        /* --- СКИНЫ --- */
         .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
         .skin-paper .app-item { background: #e8e0c5; border: 1px solid #c0b393; border-radius: 2px; }
         .skin-paper .app-item span { color: #5a4a32; font-family: 'Courier New', monospace; font-weight: bold; }
@@ -205,9 +200,7 @@
         .skin-illuminati .app-item { background: #000; border: 1px solid #33ff00; transform: rotate(1deg); }
         .skin-illuminati .center-line { background: #33ff00; width: 1px; box-shadow: 0 0 50px #33ff00; }
 
-        /* --- НОВЫЕ СУПЕР ДОРОГИЕ СКИНЫ --- */
-        
-        /* 14. Черная Дыра */
+        /* БОЖЕСТВЕННЫЕ СКИНЫ */
         .skin-blackhole { 
             border: none; background: #000; animation: blackhole 5s infinite; 
             box-shadow: 0 0 50px #000;
@@ -216,7 +209,6 @@
         .skin-blackhole .app-item span { color: #444; font-size: 8px; }
         .skin-blackhole .center-line { background: white; width: 1px; box-shadow: 0 0 20px white; }
 
-        /* 15. Мультивселенная */
         .skin-multiverse { 
             border: 5px dashed #ff00ff; background: url('https://media.giphy.com/media/26tOZ42Mg6pbTUPvy/giphy.gif'); /* Абстракция */
             background-size: cover;
@@ -224,18 +216,16 @@
         .skin-multiverse .app-item { background: rgba(255,255,255,0.2); border: 2px solid white; backdrop-filter: blur(5px); }
         .skin-multiverse .app-item span { color: white; text-shadow: 2px 2px 0 #000; }
 
-        /* 16. Повелитель Времени */
         .skin-timelord { border: 5px double #c0a062; background: #161005; box-shadow: inset 0 0 100px #524220; }
         .skin-timelord .app-item { border: 1px solid #c0a062; background: transparent; transform: skewX(-10deg); }
         .skin-timelord .app-item span { color: #c0a062; letter-spacing: 2px; }
 
-        /* 17. Админ Реальности */
         .skin-admin { border: 5px solid white; background: #fff; box-shadow: 0 0 100px white; }
         .skin-admin .app-item { background: white; border: 2px solid #ddd; }
         .skin-admin .app-item span { color: #000; font-weight: 900; }
         .skin-admin .center-line { background: #000; width: 5px; }
 
-        /* 18. ВЛАСТЕЛИН ИНТЕРНЕТА (100 ТРЛН) */
+        /* ВЛАСТЕЛИН ИНТЕРНЕТА */
         .skin-the-end { 
             border: 10px solid #ff0000; 
             background: #000; 
@@ -379,7 +369,7 @@
 
         // --- МУЗЫКА ---
         const rknAudio = new Audio('RKN.mp3');
-        rknAudio.loop = true; // Зацикливание
+        rknAudio.loop = true; 
 
         // --- СПИСОК ТОВАРОВ ---
         const shopItems = [
@@ -408,13 +398,13 @@
             { id: 'space', name: 'Галактика', price: 500000000, mult: 35.0, desc: 'Блокируем планеты', class: 'skin-space' },
             { id: 'illuminati', name: 'Тайное правительство', price: 1000000000, mult: 50.0, desc: 'Всевидящее око', class: 'skin-illuminati' },
 
-            // Tier 6: БОЖЕСТВЕННЫЕ (НОВЫЕ)
+            // Tier 6
             { id: 'blackhole', name: 'Черная Дыра', price: 100000000000, mult: 100.0, desc: 'Поглощает трафик', class: 'skin-blackhole' },
             { id: 'multiverse', name: 'Мультивселенная', price: 500000000000, mult: 250.0, desc: 'Бан в 5 измерениях', class: 'skin-multiverse' },
             { id: 'timelord', name: 'Повелитель Времени', price: 5000000000000, mult: 500.0, desc: 'Замедление времени', class: 'skin-timelord' },
             { id: 'admin', name: 'Админ Реальности', price: 20000000000000, mult: 1000.0, desc: 'Удаление вселенной', class: 'skin-admin' },
             
-            // Tier 7: THE END
+            // Tier 7
             { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' }
         ];
 
@@ -436,15 +426,19 @@
             updateBalanceUI();
             applySkin(currentSkinId);
             
-            // Если при загрузке страницы уже надет самый дорогой скин
-            // Браузер может заблокировать автоплей, но мы попробуем
             if(currentSkinId === 'the_end') {
                 rknAudio.play().catch(e => console.log("Нужен клик для музыки"));
             }
 
+            // --- НОВАЯ ЛОГИКА ГЕНЕРАЦИИ (РАНДОМ) ---
             for(let i=0; i<50; i++) {
-                rouletteList = rouletteList.concat(apps);
+                // Создаем копию списка и перемешиваем её перед добавлением
+                let batch = [...apps];
+                batch.sort(() => Math.random() - 0.5);
+                
+                rouletteList = rouletteList.concat(batch);
             }
+            // ----------------------------------------
             
             rouletteList.forEach(app => {
                 const div = document.createElement('div');
@@ -492,12 +486,10 @@
             if(type === 'ЗАМЕДЛЕНО') stamp.style.background = '#9da631';
             if(type === 'ОГРАНИЧИТЬ') stamp.style.background = '#e67e22';
 
-            // Базовая награда
             let min = 20000, max = 50000;
             if(type === 'ЗАМЕДЛИТЬ') { min = 50000; max = 80000; }
             if(type === 'ЗАБАНИТЬ') { min = 100000; max = 200000; }
 
-            // ПРИМЕНЕНИЕ МНОЖИТЕЛЯ СКИНА
             const skinData = shopItems.find(i => i.id === currentSkinId);
             const multiplier = skinData ? skinData.mult : 1;
 
@@ -526,7 +518,6 @@
             document.getElementById('balanceDisplay').innerText = balance.toLocaleString();
         }
 
-        // --- МАГАЗИН ЛОГИКА ---
         function openShop() {
             const list = document.getElementById('shopList');
             list.innerHTML = '';
@@ -581,7 +572,6 @@
             localStorage.setItem('rkn_skin', id);
             applySkin(id);
 
-            // --- ЛОГИКА МУЗЫКИ ---
             if(id === 'the_end') {
                 rknAudio.currentTime = 0;
                 rknAudio.play().catch(e => console.log(e));
@@ -595,7 +585,7 @@
 
         function applySkin(id) {
             const box = document.getElementById('rouletteBox');
-            box.className = 'roulette-container'; // Сброс
+            box.className = 'roulette-container';
             const item = shopItems.find(i => i.id === id);
             if(item && item.class) box.classList.add(item.class);
         }
