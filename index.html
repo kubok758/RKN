@@ -49,8 +49,6 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-        
-        /* Старые анимации */
         @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700, inset 0 0 30px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
         @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 60% { transform: translate(3px, 3px); } 80% { transform: translate(3px, -3px); } 100% { transform: translate(0); } }
         @keyframes blackhole { 0% { box-shadow: inset 0 0 20px #000; transform: scale(1); } 50% { box-shadow: inset 0 0 100px #000; transform: scale(0.98); } 100% { box-shadow: inset 0 0 20px #000; transform: scale(1); } }
@@ -72,7 +70,7 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 10px; }
-        header img { width: 35px; height: 35px; }
+        header img { width: 35px; height: 35px; cursor: pointer; } /* Курсор для лого */
         .header-title h1 { font-size: 16px; margin: 0; color: #ccc; }
         .header-title p { font-size: 10px; color: #666; margin: 0; }
 
@@ -102,7 +100,7 @@
             border-radius: 15px;
             overflow: hidden;
             border: 2px solid #333;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             transition: all 0.3s;
         }
 
@@ -136,17 +134,8 @@
             animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate;
             border: 3px solid white;
         }
-        .app-item.ultra img {
-            animation: hue-spin 1s linear infinite;
-            filter: contrast(150%);
-        }
-        .app-item.ultra span {
-            color: black;
-            font-weight: 900;
-            background: white;
-            padding: 2px 5px;
-            border-radius: 4px;
-        }
+        .app-item.ultra img { animation: hue-spin 1s linear infinite; filter: contrast(150%); }
+        .app-item.ultra span { color: black; font-weight: 900; background: white; padding: 2px 5px; border-radius: 4px; }
 
         /* --- СКИНЫ --- */
         .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
@@ -247,6 +236,20 @@
         .spin-btn.active { background: #ffd700; color: black; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
         .shop-btn { background: #4285f4; color: white; box-shadow: 0 0 20px rgba(66, 133, 244, 0.3); }
 
+        /* ТАЙМЕР БУСТА */
+        .boost-timer {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            display: none; /* Скрыт по умолчанию */
+            background: rgba(0, 50, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: 1px solid #00ff00;
+        }
+
         /* --- МОДАЛКИ --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -286,7 +289,7 @@
 
     <header>
         <div class="header-left">
-            <img src="logo.png" alt="RKN">
+            <img id="headerLogo" src="logo.png" alt="RKN" onclick="handleLogoClick()">
             <div class="header-title">
                 <h1>РОСКОМНАДЗОР</h1>
                 <p>Баланс системы</p>
@@ -309,6 +312,8 @@
         <button class="btn shop-btn" onclick="openShop()">🛒 Магазин</button>
         <button id="spinBtn" class="btn spin-btn active" onclick="spinRoulette()">КРУТИТЬ</button>
     </div>
+    
+    <div id="boostTimer" class="boost-timer">БУСТ: 15:00</div>
 
     <div class="modal-overlay" id="actionModal">
         <div class="modal-card">
@@ -365,38 +370,25 @@
 
         // --- СПИСОК ТОВАРОВ ---
         const shopItems = [
-            // Tier 1
             { id: 'default', name: 'Стандарт', price: 0, mult: 1, desc: 'Обычный вид' },
             { id: 'paper', name: 'Бюрократия', price: 50000, mult: 1.2, desc: 'Завалено бумагами', class: 'skin-paper' },
             { id: 'retro', name: 'Windows 95', price: 150000, mult: 1.5, desc: 'Старая школа', class: 'skin-retro' },
             { id: 'dark', name: 'Ночной режим', price: 250000, mult: 1.8, desc: 'Темная тема', class: 'skin-oil' }, 
-
-            // Tier 2
             { id: 'ice', name: 'Ледниковый период', price: 500000, mult: 2.5, desc: 'Полная заморозка', class: 'skin-ice' },
             { id: 'matrix', name: 'Хакер', price: 800000, mult: 3.0, desc: 'Ты в системе', class: 'skin-matrix' },
             { id: 'ussr', name: 'Советская власть', price: 1000000, mult: 3.5, desc: 'Железный занавес', class: 'skin-ussr' },
-            
-            // Tier 3
             { id: 'neon', name: 'Cyber RKN', price: 2000000, mult: 5.0, desc: 'Будущее наступило', class: 'skin-neon' },
             { id: 'gold', name: 'Luxury Gold', price: 5000000, mult: 8.0, desc: 'Пульсирующее золото', class: 'skin-gold' },
             { id: 'glitch', name: 'Критический сбой', price: 10000000, mult: 10.0, desc: 'Система сломана', class: 'skin-glitch' },
-            
-            // Tier 4
             { id: 'lava', name: 'Адский огонь', price: 25000000, mult: 15.0, desc: 'Сжигает бюджет', class: 'skin-lava' },
             { id: 'rgb', name: 'RGB Геймер', price: 50000000, mult: 20.0, desc: 'Максимальный FPS', class: 'skin-rgb' },
             { id: 'oil', name: 'Нефтяной магнат', price: 100000000, mult: 25.0, desc: 'Черное золото', class: 'skin-oil' },
-
-            // Tier 5
             { id: 'space', name: 'Галактика', price: 500000000, mult: 35.0, desc: 'Блокируем планеты', class: 'skin-space' },
             { id: 'illuminati', name: 'Тайное правительство', price: 1000000000, mult: 50.0, desc: 'Всевидящее око', class: 'skin-illuminati' },
-
-            // Tier 6
             { id: 'blackhole', name: 'Черная Дыра', price: 100000000000, mult: 100.0, desc: 'Поглощает трафик', class: 'skin-blackhole' },
             { id: 'multiverse', name: 'Мультивселенная', price: 500000000000, mult: 250.0, desc: 'Бан в 5 измерениях', class: 'skin-multiverse' },
             { id: 'timelord', name: 'Повелитель Времени', price: 5000000000000, mult: 500.0, desc: 'Замедление времени', class: 'skin-timelord' },
             { id: 'admin', name: 'Админ Реальности', price: 20000000000000, mult: 1000.0, desc: 'Удаление вселенной', class: 'skin-admin' },
-            
-            // Tier 7
             { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' }
         ];
 
@@ -405,7 +397,13 @@
         let currentSkinId = localStorage.getItem('rkn_skin') || 'default';
         let currentWinAmount = 0;
         
-        // Размеры
+        // --- ПЕРЕМЕННЫЕ ДЛЯ КОДА ---
+        let logoClicks = 0;
+        let clickResetTimer;
+        let isBoostActive = false;
+        let boostInterval;
+        let codeUsed = localStorage.getItem('rkn_code_used') === 'true'; // Проверка использован ли код
+
         const CARD_WIDTH = 100; 
         const MARGIN_SIDE = 5;  
         const SLOT_WIDTH = CARD_WIDTH + (MARGIN_SIDE * 2);
@@ -417,22 +415,29 @@
         function init() {
             updateBalanceUI();
             applySkin(currentSkinId);
+            checkBoostStatus(); // Проверяем активен ли буст при загрузке
             
             if(currentSkinId === 'the_end') {
                 rknAudio.play().catch(e => console.log("Нужен клик для музыки"));
             }
 
-            // --- НОВАЯ ЛОГИКА ГЕНЕРАЦИИ С УЛЬТРАБАНОМ ---
+            // Очищаем трек перед генерацией (важно для активации буста)
+            track.innerHTML = '';
+            rouletteList = [];
+
+            // --- ГЕНЕРАЦИЯ ЛЕНТЫ ---
+            // Шанс ультрабана зависит от буста
+            const ultraChance = isBoostActive ? 0.3 : 0.005; // 30% если буст, иначе 0.5%
+
             for(let i=0; i<50; i++) {
                 let batch = [...apps];
                 batch.sort(() => Math.random() - 0.5);
                 
-                // Внедрение УЛЬТРАБАНА (шанс 0.5% на каждый элемент)
                 batch = batch.map(app => {
-                    if(Math.random() < 0.005) { // 0.5% шанс
+                    if(Math.random() < ultraChance) { 
                         return { 
                             name: "УЛЬТРАБАН", 
-                            img: "logo.png", // Используем лого РКН
+                            img: "logo.png",
                             isUltra: true 
                         };
                     }
@@ -450,6 +455,86 @@
             });
         }
         init();
+
+        // --- ЛОГИКА СЕКРЕТНОГО КОДА ---
+        function handleLogoClick() {
+            logoClicks++;
+            
+            // Сброс счетчика кликов если пауза больше 1 сек
+            clearTimeout(clickResetTimer);
+            clickResetTimer = setTimeout(() => {
+                logoClicks = 0;
+            }, 1000);
+
+            if(logoClicks >= 10) {
+                logoClicks = 0;
+                if(codeUsed) {
+                    alert("Промокод уже был использован!");
+                    return;
+                }
+                askForCode();
+            }
+        }
+
+        function askForCode() {
+            const code = prompt("Введите секретный код разработчика:");
+            if(code === "RKNPIDORI") {
+                activateBoost();
+            } else if (code) {
+                alert("Неверный код!");
+            }
+        }
+
+        function activateBoost() {
+            alert("ПРОМОКОД АКТИВИРОВАН! ШАНС УЛЬТРАБАНА 30% НА 15 МИНУТ!");
+            
+            // Сохраняем время окончания (текущее + 15 минут)
+            const endTime = Date.now() + 15 * 60 * 1000;
+            localStorage.setItem('rkn_boost_end', endTime);
+            
+            // Помечаем что код использован
+            localStorage.setItem('rkn_code_used', 'true');
+            codeUsed = true;
+
+            checkBoostStatus();
+            init(); // Перегенерируем ленту с новым шансом
+        }
+
+        function checkBoostStatus() {
+            const endTime = parseInt(localStorage.getItem('rkn_boost_end'));
+            
+            if (endTime && endTime > Date.now()) {
+                isBoostActive = true;
+                document.getElementById('boostTimer').style.display = 'block';
+                
+                // Запуск таймера
+                if (boostInterval) clearInterval(boostInterval);
+                boostInterval = setInterval(() => {
+                    const now = Date.now();
+                    const left = endTime - now;
+                    
+                    if (left <= 0) {
+                        // Время вышло
+                        clearInterval(boostInterval);
+                        isBoostActive = false;
+                        document.getElementById('boostTimer').style.display = 'none';
+                        localStorage.removeItem('rkn_boost_end');
+                        init(); // Возвращаем обычный шанс
+                    } else {
+                        // Обновляем текст
+                        const min = Math.floor(left / 60000);
+                        const sec = Math.floor((left % 60000) / 1000);
+                        document.getElementById('boostTimer').innerText = 
+                            `БУСТ: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+                    }
+                }, 1000);
+            } else {
+                isBoostActive = false;
+                document.getElementById('boostTimer').style.display = 'none';
+            }
+        }
+
+        // --- РУЛЕТКА ---
 
         function spinRoulette() {
             if (isSpinning) return;
@@ -474,7 +559,6 @@
         }
 
         function showActionChoice(app) {
-            // ЕСЛИ ВЫПАЛ УЛЬТРАБАН
             if(app.isUltra) {
                 triggerUltraReward();
                 return;
@@ -486,9 +570,7 @@
         }
 
         function triggerUltraReward() {
-            // Расчет награды: (Макс. бан 200к * 32 сервиса) * Множитель скина
             const basePool = 200000 * 32; 
-            
             const skinData = shopItems.find(i => i.id === currentSkinId);
             const multiplier = skinData ? skinData.mult : 1;
             
@@ -508,7 +590,7 @@
             
             const stamp = document.getElementById('resultStamp');
             stamp.innerText = type;
-            stamp.style.animation = "none"; // Сброс анимации ультрабана
+            stamp.style.animation = "none";
             
             if(type === 'ЗАБАНЕНО') stamp.style.background = '#c0392b';
             if(type === 'ЗАМЕДЛЕНО') stamp.style.background = '#9da631';
@@ -620,3 +702,4 @@
     </script>
 </body>
 </html>
+ 
