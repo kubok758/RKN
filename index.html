@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>РКН - Симулятор блокировок</title>
+    <title>РКН - Симулятор & Магазин</title>
     <style>
         body {
             margin: 0;
@@ -22,97 +22,106 @@
         /* --- ШАПКА --- */
         header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 20px;
-            gap: 15px;
-            margin-bottom: 20px;
+            padding: 15px 20px;
             width: 100%;
-            justify-content: center;
             background: #151517;
             border-bottom: 1px solid #333;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            z-index: 50;
         }
 
-        header img {
-            width: 40px;
-            height: 40px;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        header div h1 {
-            font-size: 18px;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #ccc;
+        header img { width: 35px; height: 35px; }
+        
+        .header-title h1 { font-size: 16px; margin: 0; color: #ccc; }
+        .header-title p { font-size: 10px; color: #666; margin: 0; }
+
+        .balance-box {
+            background: #252528;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #444;
+            font-weight: bold;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        header div p {
-            font-size: 10px;
-            color: #666;
-            margin: 0;
-        }
+        /* Отступ для контента из-за фикс. шапки */
+        .spacer { height: 80px; }
 
         /* --- ЗАГОЛОВОК --- */
         h2.main-title {
-            font-size: 22px;
-            margin: 40px 0 20px 0;
+            font-size: 20px;
+            margin: 30px 0 20px 0;
             text-align: center;
             font-weight: bold;
         }
 
-        /* --- РУЛЕТКА --- */
+        /* --- РУЛЕТКА (БАЗА) --- */
         .roulette-container {
             position: relative;
             width: 95%;
             max-width: 600px;
-            height: 130px;
+            height: 140px;
             background: #1a1a1d;
             border-radius: 15px;
             overflow: hidden;
-            border: 2px solid #2a2a2d;
-            margin-bottom: 40px;
-            box-shadow: inset 0 0 20px #000;
+            border: 2px solid #333;
+            margin-bottom: 30px;
+            transition: all 0.3s;
         }
 
         .roulette-track {
             display: flex;
             height: 100%;
             align-items: center;
-            will-change: transform; /* Оптимизация анимации */
+            will-change: transform;
         }
 
         .app-item {
-            width: 100px; /* Ширина слота */
-            height: 90px;
+            width: 100px;
+            height: 100px;
             background: #252528;
-            border-radius: 12px;
-            margin: 0 5px; /* Отступы между слотами */
+            border-radius: 15px;
+            margin: 0 5px; /* Итоговая ширина слота 110px */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
             border: 1px solid #333;
+            position: relative;
+            z-index: 1;
         }
 
         .app-item img {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             margin-bottom: 8px;
-            border-radius: 8px;
+            border-radius: 10px;
             object-fit: cover;
         }
 
         .app-item span {
             font-size: 11px;
             color: #aaa;
-            text-align: center;
-            width: 90%;
+            max-width: 90px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* Центральная линия */
         .center-line {
             position: absolute;
             top: 0;
@@ -122,197 +131,210 @@
             height: 100%;
             background: #ffd700;
             z-index: 10;
-            box-shadow: 0 0 15px #ffd700;
+            box-shadow: 0 0 10px #ffd700;
             opacity: 0.8;
         }
 
-        /* --- КНОПКА КРУТИТЬ --- */
-        .spin-btn {
-            background: #ffd700;
-            color: #111;
+        /* --- СКИНЫ (Модификаторы) --- */
+        
+        /* 1. GOLD SKIN */
+        .skin-gold {
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            background: #111;
+        }
+        .skin-gold .app-item {
+            background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+            border: 1px solid #ffd700;
+        }
+        .skin-gold .app-item span { color: #ffd700; }
+        .skin-gold .center-line { background: white; box-shadow: 0 0 15px white; }
+
+        /* 2. NEON SKIN */
+        .skin-neon {
+            border: 3px solid #00f3ff;
+            box-shadow: 0 0 30px #00f3ff;
+            background: #050505;
+        }
+        .skin-neon .app-item {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid #00f3ff;
+            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+        .skin-neon .app-item span { color: #00f3ff; text-shadow: 0 0 5px #00f3ff; }
+        .skin-neon .center-line { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; width: 6px; }
+
+        /* 3. USSR SKIN */
+        .skin-ussr {
+            border: 4px solid #d32f2f;
+            background: #2b0c0c;
+        }
+        .skin-ussr .app-item {
+            background: #d32f2f;
+            border: 2px solid #ffcc00;
+            border-radius: 0; /* Квадратные */
+        }
+        .skin-ussr .app-item span { color: #ffcc00; font-weight: bold; }
+        .skin-ussr .center-line { background: #ffcc00; width: 5px; }
+
+        /* --- УПРАВЛЕНИЕ --- */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
             border: none;
-            padding: 18px 80px;
-            font-size: 20px;
-            font-weight: 900;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
-            transition: transform 0.1s, box-shadow 0.2s;
             text-transform: uppercase;
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.95); }
+
+        .spin-btn {
+            background: #ffd700;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            padding: 15px 60px;
+            font-size: 18px;
+        }
+        .spin-btn:disabled { background: #444; color: #777; box-shadow: none; cursor: not-allowed; }
+
+        .shop-btn {
+            background: #2196f3;
+            color: white;
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .spin-btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-        }
-
-        .spin-btn:disabled {
-            background: #555;
-            color: #888;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* --- МОДАЛЬНЫЕ ОКНА --- */
+        /* --- МОДАЛКИ ОБЩИЕ --- */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none; /* Скрыто по умолчанию */
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 100;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
         }
 
         .modal-card {
             background: #1e1e20;
             padding: 25px;
-            border-radius: 24px;
-            text-align: center;
-            width: 320px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid #333;
-        }
-
-        @keyframes modalPop {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        /* Окно действия (Выбор бана) */
-        .app-preview img {
-            width: 90px;
-            height: 90px;
             border-radius: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid #333;
+            animation: popIn 0.3s ease;
         }
-        
-        .app-preview h3 {
-            margin: 0 0 25px 0;
-            font-size: 24px;
-            color: #fff;
+        @keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
+
+        /* Модалка Действия */
+        .app-preview img { width: 90px; height: 90px; border-radius: 20px; margin-bottom: 15px; }
+        .action-btn { width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 8px; font-weight: bold; color: white; cursor: pointer; }
+        .btn-restrict { background: #f57c00; box-shadow: 0 4px #b35a00; }
+        .btn-slow { background: #afb42b; box-shadow: 0 4px #82861e; }
+        .btn-ban { background: #d32f2f; box-shadow: 0 4px #9a1f1f; }
+        .action-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Модалка Награды */
+        .stamp { border: 3px solid white; display: inline-block; padding: 5px 15px; font-weight: bold; font-size: 20px; transform: rotate(-5deg); margin-bottom: 20px; }
+        .stamp.banned { background: #d32f2f; }
+        .stamp.slowed { background: #afb42b; }
+        .stamp.restricted { background: #f57c00; }
+        .take-btn { background: #ffd700; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+
+        /* --- МАГАЗИН UI --- */
+        .shop-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            text-align: left;
         }
 
-        .action-btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 14px;
+        .shop-item {
+            background: #2a2a2d;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #444;
+        }
+
+        .item-info h4 { margin: 0 0 5px 0; font-size: 16px; }
+        .item-price { color: #ffd700; font-size: 14px; }
+        .item-desc { font-size: 11px; color: #888; }
+
+        .buy-btn {
+            background: #4caf50;
             color: white;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: transform 0.1s;
-        }
-
-        .btn-restrict { background: #f57c00; box-shadow: 0 4px 0 #b35a00; }
-        .btn-slow { background: #afb42b; box-shadow: 0 4px 0 #82861e; }
-        .btn-ban { background: #d32f2f; box-shadow: 0 4px 0 #9a1f1f; }
-
-        .action-btn:active {
-            transform: translateY(4px);
-            box-shadow: none !important;
-        }
-
-        /* Окно награды */
-        .reward-card {
-            background: linear-gradient(135deg, #b71c1c 0%, #7f0000 100%);
-            border: 2px solid #ff5252;
-        }
-
-        .stamp {
-            border: 4px solid white;
-            display: inline-block;
-            padding: 5px 20px;
-            font-weight: 900;
-            font-size: 20px;
-            text-transform: uppercase;
-            transform: rotate(-6deg);
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-            box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
-        }
-        
-        /* Цвета штампа */
-        .stamp.banned { border-color: white; background: #d32f2f; color: white; }
-        .stamp.slowed { border-color: white; background: #afb42b; color: white; }
-        .stamp.restricted { border-color: white; background: #f57c00; color: white; }
-
-        .salary-desc {
-            color: rgba(255,255,255,0.8);
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-
-        .money-amount {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 5px 0 25px 0;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .take-money-btn {
-            background: #ffd700;
-            color: #000;
-            width: 100%;
-            padding: 14px;
             border: none;
-            border-radius: 10px;
+            padding: 8px 15px;
+            border-radius: 6px;
             font-weight: bold;
-            font-size: 16px;
             cursor: pointer;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 0 #b29700;
+            font-size: 12px;
         }
+        .buy-btn.owned { background: #555; cursor: default; }
+        .buy-btn.equip { background: #2196f3; cursor: pointer; }
+        .buy-btn.equipped { background: #ffd700; color: black; cursor: default; }
         
-        .take-money-btn:active { transform: translateY(4px); box-shadow: none; }
-
-        .more-btn {
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
+        .close-shop {
+            background: transparent; border: 1px solid #555; color: #aaa; width: 100%; padding: 10px; margin-top: 15px; border-radius: 8px; cursor: pointer;
         }
+
     </style>
 </head>
 <body>
 
     <header>
-        <img src="logo.png" alt="RKN Logo">
-        <div>
-            <h1>РОСКОМНАДЗОР</h1>
-            <p>Симулятор принятия решений</p>
+        <div class="header-left">
+            <img src="logo.png" alt="RKN">
+            <div class="header-title">
+                <h1>РОСКОМНАДЗОР</h1>
+                <p>Баланс системы</p>
+            </div>
+        </div>
+        <div class="balance-box">
+            <span id="balanceDisplay">0</span> ₽
         </div>
     </header>
 
+    <div class="spacer"></div>
+
     <h2 class="main-title">ЧТО ЗАПРЕТИМ СЕГОДНЯ?</h2>
 
-    <div class="roulette-container">
+    <div class="roulette-container" id="rouletteBox">
         <div class="center-line"></div>
         <div class="roulette-track" id="track">
             </div>
     </div>
 
-    <button id="spinBtn" class="spin-btn" onclick="spinRoulette()">КРУТИТЬ</button>
+    <div class="controls">
+        <button class="btn shop-btn" onclick="openShop()">🛒 Магазин</button>
+        <button id="spinBtn" class="btn spin-btn" onclick="spinRoulette()">КРУТИТЬ</button>
+    </div>
 
     <div class="modal-overlay" id="actionModal">
         <div class="modal-card">
             <div class="app-preview">
                 <img id="selectedAppImg" src="" alt="">
-                <h3 id="selectedAppName">App Name</h3>
+                <h3 id="selectedAppName">App</h3>
             </div>
             <button class="action-btn btn-restrict" onclick="chooseAction('ОГРАНИЧЕНО')">ОГРАНИЧИТЬ</button>
             <button class="action-btn btn-slow" onclick="chooseAction('ЗАМЕДЛЕНО')">ЗАМЕДЛИТЬ</button>
@@ -321,113 +343,119 @@
     </div>
 
     <div class="modal-overlay" id="rewardModal">
-        <div class="modal-card reward-card">
+        <div class="modal-card" style="background: linear-gradient(135deg, #a32222, #7f1a1a); border: 1px solid #ff5252;">
             <div id="resultStamp" class="stamp">ЗАБАНЕНО</div>
-            <p class="salary-desc">Сегодня вы хорошо потрудились</p>
-            <h2 class="money-amount" id="moneyText">0 ₽</h2>
-            <p class="salary-desc" style="margin-top: -15px; margin-bottom: 25px;">ВАША ЗАРПЛАТА НА СЕГОДНЯ</p>
-            
-            <button class="take-money-btn" onclick="closeAll()">Забрать деньги</button>
-            <button class="more-btn" onclick="closeAll()">Крутить ещё</button>
+            <p style="font-size: 12px; color: #ddd;">Бюджет пополнен на</p>
+            <h2 id="moneyText" style="font-size: 40px; margin: 10px 0 30px 0;">0 ₽</h2>
+            <button class="take-btn" onclick="collectMoney()">Забрать в бюджет</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="shopModal">
+        <div class="modal-card" style="max-width: 400px; text-align: left;">
+            <h2 style="margin-top: 0; text-align: center;">Госзакупки (Скины)</h2>
+            <div class="shop-list" id="shopList">
+                </div>
+            <button class="close-shop" onclick="closeShop()">Закрыть</button>
         </div>
     </div>
 
     <script>
-        // --- КОНФИГУРАЦИЯ ---
-        // Полный список сервисов
+        // --- ДАННЫЕ ---
         const apps = [
-            { name: "CapCut", img: "capcut.png" },
-            { name: "ChatGPT", img: "chatgpt.png" },
-            { name: "WhatsApp", img: "whatsapp.png" },
-            { name: "X (Twitter)", img: "x.png" },
-            { name: "Zoom", img: "zoom.png" },
-            { name: "Teams", img: "teams.png" },
-            { name: "TikTok", img: "tiktok.png" },
-            { name: "YouTube", img: "youtube.png" },
-            { name: "Discord", img: "discord.png" },
-            { name: "Telegram", img: "telegram.png" },
-            { name: "Instagram", img: "instagram.png" },
-            { name: "Facebook", img: "facebook.png" },
-            { name: "Twitch", img: "twitch.png" },
-            { name: "Spotify", img: "spotify.png" },
-            { name: "Netflix", img: "netflix.png" },
-            { name: "Steam", img: "steam.png" },
-            { name: "Roblox", img: "roblox.png" },
-            { name: "Pinterest", img: "pinterest.png" },
-            { name: "Reddit", img: "reddit.png" },
-            { name: "Snapchat", img: "snapchat.png" },
-            { name: "LinkedIn", img: "linkedin.png" },
-            { name: "GitHub", img: "github.png" },
-            { name: "Wikipedia", img: "wikipedia.png" },
-            { name: "Google", img: "google.png" },
-            { name: "Amazon", img: "amazon.png" },
-            { name: "Viber", img: "viber.png" },
-            { name: "Signal", img: "signal.png" },
-            { name: "Skype", img: "skype.png" },
-            { name: "SoundCloud", img: "soundcloud.png" },
-            { name: "Minecraft", img: "minecraft.png" },
-            { name: "Brawl Stars", img: "brawlstars.png" },
-            { name: "Likee", img: "likee.png" }
+            { name: "CapCut", img: "capcut.png" }, { name: "ChatGPT", img: "chatgpt.png" },
+            { name: "WhatsApp", img: "whatsapp.png" }, { name: "X (Twitter)", img: "x.png" },
+            { name: "Zoom", img: "zoom.png" }, { name: "Teams", img: "teams.png" },
+            { name: "TikTok", img: "tiktok.png" }, { name: "YouTube", img: "youtube.png" },
+            { name: "Discord", img: "discord.png" }, { name: "Telegram", img: "telegram.png" },
+            { name: "Instagram", img: "instagram.png" }, { name: "Facebook", img: "facebook.png" },
+            { name: "Twitch", img: "twitch.png" }, { name: "Spotify", img: "spotify.png" },
+            { name: "Netflix", img: "netflix.png" }, { name: "Steam", img: "steam.png" },
+            { name: "Roblox", img: "roblox.png" }, { name: "Pinterest", img: "pinterest.png" },
+            { name: "Reddit", img: "reddit.png" }, { name: "Snapchat", img: "snapchat.png" },
+            { name: "LinkedIn", img: "linkedin.png" }, { name: "GitHub", img: "github.png" },
+            { name: "Wikipedia", img: "wikipedia.png" }, { name: "Google", img: "google.png" },
+            { name: "Amazon", img: "amazon.png" }, { name: "Viber", img: "viber.png" },
+            { name: "Signal", img: "signal.png" }, { name: "Skype", img: "skype.png" },
+            { name: "SoundCloud", img: "soundcloud.png" }, { name: "Minecraft", img: "minecraft.png" },
+            { name: "Brawl Stars", img: "brawlstars.png" }, { name: "Likee", img: "likee.png" }
         ];
 
-        // Настройки размеров
-        const CARD_WIDTH = 100; // Ширина карточки
-        const CARD_MARGIN = 10; // Сумма отступов (5px слева + 5px справа)
-        const SLOT_WIDTH = CARD_WIDTH + CARD_MARGIN; // Полный шаг
+        // --- ТОВАРЫ В МАГАЗИНЕ ---
+        const shopItems = [
+            { id: 'default', name: 'Стандарт', price: 0, desc: 'Обычный вид ведомства' },
+            { id: 'gold', name: 'Luxury Gold', price: 500000, desc: 'Золотая отделка для элиты', class: 'skin-gold' },
+            { id: 'neon', name: 'Cyber RKN', price: 1500000, desc: 'Киберпанк стиль', class: 'skin-neon' },
+            { id: 'ussr', name: 'Soviet Power', price: 5000000, desc: 'Стиль строгого режима', class: 'skin-ussr' }
+        ];
+
+        // --- ПЕРЕМЕННЫЕ ---
+        let balance = parseInt(localStorage.getItem('rkn_balance')) || 0;
+        let inventory = JSON.parse(localStorage.getItem('rkn_inventory')) || ['default'];
+        let currentSkin = localStorage.getItem('rkn_skin') || 'default';
+        let currentWinAmount = 0;
         
+        // Размеры для точного расчета
+        const CARD_WIDTH = 100;
+        const MARGIN = 10; // 5 слева + 5 справа
+        const SLOT_FULL_WIDTH = 110;
+
         const track = document.getElementById('track');
         let isSpinning = false;
+        let rouletteList = [];
 
         // --- ИНИЦИАЛИЗАЦИЯ ---
-        // Создаем "бесконечную" ленту. Повторяем список 30 раз, чтобы хватило на долгую прокрутку.
-        let rouletteContent = [];
-        for(let i=0; i<30; i++) {
-            rouletteContent = rouletteContent.concat(apps);
+        function init() {
+            updateBalanceUI();
+            applySkin(currentSkin);
+            
+            // Генерируем ленту (30 повторов)
+            for(let i=0; i<30; i++) {
+                rouletteList = rouletteList.concat(apps);
+            }
+            
+            // Отрисовка
+            rouletteList.forEach(app => {
+                const div = document.createElement('div');
+                div.className = 'app-item';
+                div.innerHTML = `<img src="${app.img}"><span>${app.name}</span>`;
+                track.appendChild(div);
+            });
         }
+        
+        init();
 
-        // Отрисовка ленты в HTML
-        rouletteContent.forEach(app => {
-            const div = document.createElement('div');
-            div.className = 'app-item';
-            div.innerHTML = `<img src="${app.img}"><span>${app.name}</span>`;
-            track.appendChild(div);
-        });
-
-        // --- ЛОГИКА ---
-
+        // --- РУЛЕТКА (ИСПРАВЛЕННАЯ ЛОГИКА) ---
         function spinRoulette() {
             if (isSpinning) return;
             isSpinning = true;
             document.getElementById('spinBtn').disabled = true;
 
-            // Выбираем случайный индекс остановки (где-то посередине ленты)
-            // Список длинный, берем диапазон от 300 до 600
+            // Выбираем индекс победителя (далеко в списке, от 300 до 600)
             const stopIndex = Math.floor(Math.random() * 300) + 300; 
-            const selectedApp = rouletteContent[stopIndex];
+            const selectedApp = rouletteList[stopIndex];
 
-            // Расчет позиции
-            // Центр контейнера (ширина контейнера ~600px, половина 300px)
-            // Центр элемента = (индекс * шаг) + (шаг / 2)
-            const containerCenter = document.querySelector('.roulette-container').offsetWidth / 2;
-            const itemCenter = (stopIndex * SLOT_WIDTH) + (SLOT_WIDTH / 2);
-            
-            // На сколько нужно сдвинуть ленту влево
+            // МАТЕМАТИКА ЦЕНТРИРОВАНИЯ
+            // Центр контейнера (по ширине)
+            const containerWidth = document.getElementById('rouletteBox').offsetWidth;
+            const containerCenter = containerWidth / 2;
+
+            // Центр победного элемента относительно начала ленты
+            // Позиция левого края = index * 110 + 5 (margin-left)
+            // Центр элемента = Позиция левого края + 50 (половина ширины)
+            const itemCenter = (stopIndex * SLOT_FULL_WIDTH) + 5 + (CARD_WIDTH / 2);
+
+            // Сдвиг (translateX) должен быть отрицательным
             const offset = -(itemCenter - containerCenter);
 
-            // Добавляем микро-рандом внутри слота (+- 15px), чтобы не всегда идеально по центру
-            const randomOffset = Math.floor(Math.random() * 30) - 15;
-            const finalTransform = offset + randomOffset;
+            // Запуск анимации (без рандома в пикселях, чтобы было точно)
+            track.style.transition = "transform 5s cubic-bezier(0.1, 0.9, 0.3, 1)";
+            track.style.transform = `translateX(${offset}px)`;
 
-            // Запускаем анимацию (4.5 секунды)
-            track.style.transition = "transform 4.5s cubic-bezier(0.15, 0.9, 0.3, 1)";
-            track.style.transform = `translateX(${finalTransform}px)`;
-
-            // Когда анимация закончилась
             setTimeout(() => {
                 showActionChoice(selectedApp);
                 isSpinning = false;
-                document.getElementById('spinBtn').disabled = false;
-            }, 4500);
+            }, 5000);
         }
 
         function showActionChoice(app) {
@@ -436,43 +464,121 @@
             document.getElementById('actionModal').style.display = 'flex';
         }
 
-        function chooseAction(actionType) {
+        function chooseAction(type) {
             document.getElementById('actionModal').style.display = 'none';
             
-            // Обновляем штамп
             const stamp = document.getElementById('resultStamp');
-            stamp.innerText = actionType;
-            stamp.className = 'stamp'; // Сброс классов
+            stamp.className = 'stamp';
+            stamp.innerText = type;
             
-            if(actionType === 'ЗАБАНЕНО') stamp.classList.add('banned');
-            if(actionType === 'ЗАМЕДЛЕНО') stamp.classList.add('slowed');
-            if(actionType === 'ОГРАНИЧЕНО') stamp.classList.add('restricted');
+            if(type === 'ЗАБАНЕНО') stamp.classList.add('banned');
+            if(type === 'ЗАМЕДЛЕНО') stamp.classList.add('slowed');
+            if(type === 'ОГРАНИЧЕНО') stamp.classList.add('restricted');
 
-            // Генерация случайной суммы денег
-            // Чем жестче мера, тем больше денег (логика коррупции/премии)
-            let min = 0, max = 0;
-            
-            if(actionType === 'ОГРАНИЧЕНО') { min = 25000; max = 45000; }
-            if(actionType === 'ЗАМЕДЛЕНО') { min = 45000; max = 70000; }
-            if(actionType === 'ЗАБАНЕНО') { min = 75000; max = 120000; }
+            // Генерация награды
+            let min = 15000, max = 30000;
+            if(type === 'ЗАМЕДЛЕНО') { min = 30000; max = 60000; }
+            if(type === 'ЗАБАНЕНО') { min = 80000; max = 150000; }
 
-            // Рандом в диапазоне
+            // Небольшой бонус если дорогой скин
+            if(currentSkin === 'gold') { min *= 1.2; max *= 1.2; }
+            if(currentSkin === 'ussr') { min *= 1.5; max *= 1.5; }
+
             const rawMoney = Math.floor(Math.random() * (max - min + 1)) + min;
-            // Округляем до сотен (чтобы было красиво, типа 83 500)
-            const money = Math.ceil(rawMoney / 100) * 100;
+            currentWinAmount = Math.ceil(rawMoney / 100) * 100;
 
-            document.getElementById('moneyText').innerText = money.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('moneyText').innerText = currentWinAmount.toLocaleString() + ' ₽';
             document.getElementById('rewardModal').style.display = 'flex';
         }
 
-        function closeAll() {
-            document.getElementById('rewardModal').style.display = 'none';
+        function collectMoney() {
+            balance += currentWinAmount;
+            localStorage.setItem('rkn_balance', balance);
+            updateBalanceUI();
             
-            // Сбрасываем рулетку мгновенно (без анимации) в начало
-            // Чтобы в следующий раз снова крутилось
+            document.getElementById('rewardModal').style.display = 'none';
+            document.getElementById('spinBtn').disabled = false;
+
+            // Сброс рулетки в начало (без анимации)
             track.style.transition = "none";
             track.style.transform = "translateX(0px)";
         }
+
+        function updateBalanceUI() {
+            document.getElementById('balanceDisplay').innerText = balance.toLocaleString();
+        }
+
+        // --- МАГАЗИН ЛОГИКА ---
+        function openShop() {
+            const list = document.getElementById('shopList');
+            list.innerHTML = '';
+
+            shopItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                
+                const isOwned = inventory.includes(item.id);
+                const isEquipped = currentSkin === item.id;
+                
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = `<button class="buy-btn equipped">Выбрано</button>`;
+                } else if (isOwned) {
+                    btnHtml = `<button class="buy-btn equip" onclick="equip('${item.id}')">Выбрать</button>`;
+                } else {
+                    btnHtml = `<button class="buy-btn" onclick="buy('${item.id}', ${item.price})">Купить</button>`;
+                }
+
+                div.innerHTML = `
+                    <div class="item-info">
+                        <h4>${item.name}</h4>
+                        <div class="item-desc">${item.desc}</div>
+                        <div class="item-price">${item.price > 0 ? item.price.toLocaleString() + ' ₽' : 'Бесплатно'}</div>
+                    </div>
+                    ${btnHtml}
+                `;
+                list.appendChild(div);
+            });
+
+            document.getElementById('shopModal').style.display = 'flex';
+        }
+
+        function closeShop() {
+            document.getElementById('shopModal').style.display = 'none';
+        }
+
+        function buy(id, price) {
+            if (balance >= price) {
+                balance -= price;
+                inventory.push(id);
+                localStorage.setItem('rkn_balance', balance);
+                localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
+                updateBalanceUI();
+                openShop(); // Перерисовка кнопок
+            } else {
+                alert("Недостаточно средств в бюджете!");
+            }
+        }
+
+        function equip(id) {
+            currentSkin = id;
+            localStorage.setItem('rkn_skin', id);
+            applySkin(id);
+            openShop(); // Перерисовка кнопок
+        }
+
+        function applySkin(id) {
+            const container = document.getElementById('rouletteBox');
+            // Сброс классов
+            container.className = 'roulette-container';
+            
+            const skinData = shopItems.find(i => i.id === id);
+            if(skinData && skinData.class) {
+                container.classList.add(skinData.class);
+            }
+        }
+
     </script>
 </body>
 </html>
+ 
