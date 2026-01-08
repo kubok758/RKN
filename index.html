@@ -104,7 +104,7 @@
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); opacity: 0.9; border-radius: 2px;
         }
 
-        /* --- НОВЫЙ ТОПОВЫЙ СКИН: NEON LIQUID (Dark VIP) --- */
+        /* --- СКИН OMNISCIENCE (Dark VIP) --- */
         .skin-omniscience {
             background: #050505;
             border-radius: 24px;
@@ -116,17 +116,12 @@
         .skin-omniscience::before {
             content: ''; position: absolute; top: -50%; left: -50%; right: -50%; bottom: -50%;
             background: linear-gradient(125deg, 
-                rgba(0,0,0,0.9) 20%, 
-                rgba(80, 0, 255, 0.4) 40%, 
-                rgba(0, 0, 0, 0.95) 50%,   
-                rgba(0, 200, 255, 0.4) 60%, 
-                rgba(0,0,0,0.9) 80%);
+                rgba(0,0,0,0.9) 20%, rgba(80, 0, 255, 0.4) 40%, rgba(0, 0, 0, 0.95) 50%,   
+                rgba(0, 200, 255, 0.4) 60%, rgba(0,0,0,0.9) 80%);
             background-size: 300% 300%;
             mix-blend-mode: screen; 
             animation: neon-flow 6s ease infinite;
-            pointer-events: none;
-            z-index: 20;
-            opacity: 0.8;
+            pointer-events: none; z-index: 20; opacity: 0.8;
         }
         .skin-omniscience .app-item:not(.ultra) {
             background: rgba(10, 10, 20, 0.8);
@@ -138,11 +133,8 @@
             filter: grayscale(100%) contrast(1.5) drop-shadow(0 0 5px rgba(0, 150, 255, 0.5));
         }
         .skin-omniscience .app-item:not(.ultra) span {
-            color: #ccc; 
-            font-family: 'Courier New', monospace; 
-            font-weight: bold;
-            text-transform: uppercase;
-            text-shadow: 0 0 5px rgba(0, 150, 255, 0.8);
+            color: #ccc; font-family: 'Courier New', monospace; font-weight: bold;
+            text-transform: uppercase; text-shadow: 0 0 5px rgba(0, 150, 255, 0.8);
         }
         .skin-omniscience .center-line {
             background: #fff; width: 2px;
@@ -235,7 +227,7 @@
         .skin-the-end .app-item:not(.ultra) span { color: red; font-family: 'Courier New'; text-transform: uppercase; }
         .skin-the-end .center-line { background: red; width: 10px; box-shadow: 0 0 50px red; }
 
-        /* Обычный Ультрабан */
+        /* Ультрабан */
         .app-item.ultra { animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate; border: 3px solid white; z-index: 5; }
         .app-item.ultra img { animation: hue-spin 1s linear infinite; filter: contrast(150%); }
         .app-item.ultra span { color: black; font-weight: 900; background: white; padding: 2px 5px; border-radius: 4px; }
@@ -433,48 +425,46 @@
             { name: "Brawl Stars", img: "brawlstars.png" }, { name: "Likee", img: "likee.png" }
         ];
 
-        // АУДИО ОБЪЕКТЫ
-        const rknAudio = new Audio('RKN.mp3'); 
-        rknAudio.loop = true;
-        const rknPhonk = new Audio('RKN_PHONK.mp3'); 
-        rknPhonk.loop = true;
+        const rknAudio = new Audio('RKN.mp3'); rknAudio.loop = true;
+        const rknPhonk = new Audio('RKN_PHONK.mp3'); rknPhonk.loop = true;
 
-        // ТОВАРЫ
+        // ТОВАРЫ (СБАЛАНСИРОВАНЫ - БОЛЬШОЙ БАФФ СКИНОВ)
         const skinItems = [
             { id: 'default', name: 'Стандарт', price: 0, mult: 1, desc: 'Обычный вид' },
-            { id: 'paper', name: 'Бюрократия', price: 50000, mult: 1.2, desc: 'Завалено бумагами', class: 'skin-paper' },
-            { id: 'retro', name: 'Windows 95', price: 150000, mult: 1.5, desc: 'Старая школа', class: 'skin-retro' },
-            { id: 'dark', name: 'Ночной режим', price: 250000, mult: 1.8, desc: 'Темная тема', class: 'skin-oil' }, 
-            { id: 'ice', name: 'Ледниковый период', price: 500000, mult: 2.5, desc: 'Полная заморозка', class: 'skin-ice' },
-            { id: 'matrix', name: 'Хакер', price: 800000, mult: 3.0, desc: 'Ты в системе', class: 'skin-matrix' },
-            { id: 'ussr', name: 'Советская власть', price: 1000000, mult: 3.5, desc: 'Железный занавес', class: 'skin-ussr' },
-            { id: 'neon', name: 'Cyber RKN', price: 2000000, mult: 5.0, desc: 'Будущее наступило', class: 'skin-neon' },
-            { id: 'gold', name: 'Luxury Gold', price: 5000000, mult: 8.0, desc: 'Пульсирующее золото', class: 'skin-gold' },
-            { id: 'glitch', name: 'Критический сбой', price: 10000000, mult: 10.0, desc: 'Система сломана', class: 'skin-glitch' },
-            { id: 'lava', name: 'Адский огонь', price: 25000000, mult: 15.0, desc: 'Сжигает бюджет', class: 'skin-lava' },
-            { id: 'rgb', name: 'RGB Геймер', price: 50000000, mult: 20.0, desc: 'Максимальный FPS', class: 'skin-rgb' },
-            { id: 'oil', name: 'Нефтяной магнат', price: 100000000, mult: 25.0, desc: 'Черное золото', class: 'skin-oil' },
-            { id: 'space', name: 'Галактика', price: 500000000, mult: 35.0, desc: 'Блокируем планеты', class: 'skin-space' },
-            { id: 'illuminati', name: 'Тайное правительство', price: 1000000000, mult: 50.0, desc: 'Всевидящее око', class: 'skin-illuminati' },
-            { id: 'blackhole', name: 'Черная Дыра', price: 100000000000, mult: 100.0, desc: 'Поглощает трафик', class: 'skin-blackhole' },
-            { id: 'multiverse', name: 'Мультивселенная', price: 500000000000, mult: 250.0, desc: 'Бан в 5 измерениях', class: 'skin-multiverse' },
-            { id: 'timelord', name: 'Повелитель Времени', price: 5000000000000, mult: 500.0, desc: 'Замедление времени', class: 'skin-timelord' },
-            { id: 'admin', name: 'Админ Реальности', price: 20000000000000, mult: 1000.0, desc: 'Удаление вселенной', class: 'skin-admin' },
-            { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' },
-            { id: 'omniscience', name: 'КРИСТАЛЛ ВСЕВЕДЕНИЯ', price: 500000000000000, mult: 50000.0, desc: 'VIP: Dark Neon Liquid ♫', class: 'skin-omniscience' }
+            { id: 'paper', name: 'Бюрократия', price: 50000, mult: 5.0, desc: 'Завалено бумагами', class: 'skin-paper' },
+            { id: 'retro', name: 'Windows 95', price: 150000, mult: 15.0, desc: 'Старая школа', class: 'skin-retro' },
+            { id: 'dark', name: 'Ночной режим', price: 250000, mult: 30.0, desc: 'Темная тема', class: 'skin-oil' }, 
+            { id: 'ice', name: 'Ледниковый период', price: 500000, mult: 75.0, desc: 'Полная заморозка', class: 'skin-ice' },
+            { id: 'matrix', name: 'Хакер', price: 800000, mult: 150.0, desc: 'Ты в системе', class: 'skin-matrix' },
+            { id: 'ussr', name: 'Советская власть', price: 1000000, mult: 300.0, desc: 'Железный занавес', class: 'skin-ussr' },
+            { id: 'neon', name: 'Cyber RKN', price: 2000000, mult: 750.0, desc: 'Будущее наступило', class: 'skin-neon' },
+            { id: 'gold', name: 'Luxury Gold', price: 5000000, mult: 1500.0, desc: 'Пульсирующее золото', class: 'skin-gold' },
+            { id: 'glitch', name: 'Критический сбой', price: 10000000, mult: 3000.0, desc: 'Система сломана', class: 'skin-glitch' },
+            { id: 'lava', name: 'Адский огонь', price: 25000000, mult: 7500.0, desc: 'Сжигает бюджет', class: 'skin-lava' },
+            { id: 'rgb', name: 'RGB Геймер', price: 50000000, mult: 15000.0, desc: 'Максимальный FPS', class: 'skin-rgb' },
+            { id: 'oil', name: 'Нефтяной магнат', price: 100000000, mult: 30000.0, desc: 'Черное золото', class: 'skin-oil' },
+            { id: 'space', name: 'Галактика', price: 500000000, mult: 75000.0, desc: 'Блокируем планеты', class: 'skin-space' },
+            { id: 'illuminati', name: 'Тайное правительство', price: 1000000000, mult: 150000.0, desc: 'Всевидящее око', class: 'skin-illuminati' },
+            { id: 'blackhole', name: 'Черная Дыра', price: 100000000000, mult: 400000.0, desc: 'Поглощает трафик', class: 'skin-blackhole' },
+            { id: 'multiverse', name: 'Мультивселенная', price: 500000000000, mult: 1000000.0, desc: 'Бан в 5 измерениях', class: 'skin-multiverse' },
+            { id: 'timelord', name: 'Повелитель Времени', price: 5000000000000, mult: 5000000.0, desc: 'Замедление времени', class: 'skin-timelord' },
+            { id: 'admin', name: 'Админ Реальности', price: 20000000000000, mult: 20000000.0, desc: 'Удаление вселенной', class: 'skin-admin' },
+            { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 100000000.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' },
+            { id: 'omniscience', name: 'КРИСТАЛЛ ВСЕВЕДЕНИЯ', price: 500000000000000, mult: 1000000000.0, desc: 'VIP: Dark Neon Liquid ♫', class: 'skin-omniscience' }
         ];
 
+        // АФК (НЕРФ x20-50)
         const afkItems = [
-            { id: 'intern', name: 'Стажёр', price: 5000, income: 100, desc: 'Кликает за вас' },
-            { id: 'printer', name: 'Принтер законов', price: 25000, income: 500, desc: 'Печатает запреты' },
-            { id: 'script', name: 'Скрипт на Python', price: 100000, income: 2500, desc: 'Авто-бан' },
-            { id: 'botfarm', name: 'Ботоферма', price: 500000, income: 15000, desc: 'Жалобы 24/7' },
-            { id: 'server', name: 'Сервер блокировок', price: 2500000, income: 80000, desc: 'Железо не спит' },
-            { id: 'ai', name: 'ИИ Цензор', price: 10000000, income: 350000, desc: 'Нейросеть' },
-            { id: 'satellite', name: 'Спутник-Глушилка', price: 50000000, income: 2000000, desc: 'Ломает GPS' },
-            { id: 'dpi', name: 'Система DPI', price: 250000000, income: 10000000, desc: 'Полный контроль' },
-            { id: 'firewall', name: 'Великий Файрвол', price: 1000000000, income: 50000000, desc: 'Изоляция' },
-            { id: 'switch', name: 'РУБИЛЬНИК', price: 50000000000, income: 1000000000, desc: 'OFFLINE' }
+            { id: 'intern', name: 'Стажёр', price: 5000, income: 2, desc: 'Кликает за вас' },
+            { id: 'printer', name: 'Принтер законов', price: 25000, income: 15, desc: 'Печатает запреты' },
+            { id: 'script', name: 'Скрипт на Python', price: 100000, income: 80, desc: 'Авто-бан' },
+            { id: 'botfarm', name: 'Ботоферма', price: 500000, income: 300, desc: 'Жалобы 24/7' },
+            { id: 'server', name: 'Сервер блокировок', price: 2500000, income: 1200, desc: 'Железо не спит' },
+            { id: 'ai', name: 'ИИ Цензор', price: 10000000, income: 5000, desc: 'Нейросеть' },
+            { id: 'satellite', name: 'Спутник-Глушилка', price: 50000000, income: 20000, desc: 'Ломает GPS' },
+            { id: 'dpi', name: 'Система DPI', price: 250000000, income: 100000, desc: 'Полный контроль' },
+            { id: 'firewall', name: 'Великий Файрвол', price: 1000000000, income: 500000, desc: 'Изоляция' },
+            { id: 'switch', name: 'РУБИЛЬНИК', price: 50000000000, income: 15000000, desc: 'OFFLINE' }
         ];
 
         const techItems = [
