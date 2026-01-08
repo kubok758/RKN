@@ -9,82 +9,36 @@
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #0f0f11;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; background-color: #0f0f11; color: white;
+            font-family: 'Arial', sans-serif; display: flex; flex-direction: column;
+            align-items: center; min-height: 100vh; overflow-x: hidden;
+            user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
         /* --- АНИМАЦИИ --- */
-        @keyframes rainbow { 
-            0% { border-color: red; box-shadow: 0 0 20px red; }
-            20% { border-color: yellow; box-shadow: 0 0 20px yellow; }
-            40% { border-color: lime; box-shadow: 0 0 20px lime; }
-            60% { border-color: cyan; box-shadow: 0 0 20px cyan; }
-            80% { border-color: magenta; box-shadow: 0 0 20px magenta; }
-            100% { border-color: red; box-shadow: 0 0 20px red; }
-        }
-        @keyframes rgb-bg-flash {
-            0% { background-color: #ff0000; box-shadow: inset 0 0 20px #ff0000; }
-            20% { background-color: #ffff00; box-shadow: inset 0 0 20px #ffff00; }
-            40% { background-color: #00ff00; box-shadow: inset 0 0 20px #00ff00; }
-            60% { background-color: #00ffff; box-shadow: inset 0 0 20px #00ffff; }
-            80% { background-color: #0000ff; box-shadow: inset 0 0 20px #0000ff; }
-            100% { background-color: #ff00ff; box-shadow: inset 0 0 20px #ff00ff; }
-        }
-        @keyframes hue-spin {
-            from { filter: hue-rotate(0deg); }
-            to { filter: hue-rotate(360deg); }
-        }
-        @keyframes ultra-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700, inset 0 0 30px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
-        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 60% { transform: translate(3px, 3px); } 80% { transform: translate(3px, -3px); } 100% { transform: translate(0); } }
-        @keyframes blackhole { 0% { box-shadow: inset 0 0 20px #000; transform: scale(1); } 50% { box-shadow: inset 0 0 100px #000; transform: scale(0.98); } 100% { box-shadow: inset 0 0 20px #000; transform: scale(1); } }
+        @keyframes rainbow { 0% { border-color: red; box-shadow: 0 0 20px red; } 100% { border-color: blue; box-shadow: 0 0 20px blue; } }
+        @keyframes rgb-bg-flash { 0% { background-color: #ff0000; } 50% { background-color: #00ff00; } 100% { background-color: #0000ff; } }
+        @keyframes hue-spin { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+        @keyframes ultra-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
+        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 100% { transform: translate(0); } }
+        @keyframes blackhole { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
         @keyframes shake-hard { 0% { transform: translate(1px, 1px); } 100% { transform: translate(-1px, -2px); } }
 
         /* --- ИНТЕРФЕЙС --- */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            width: 100%;
-            background: #151517;
-            border-bottom: 1px solid #333;
-            position: fixed;
-            top: 0;
-            z-index: 50;
-            height: 70px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; width: 100%; background: #151517;
+            border-bottom: 1px solid #333; position: fixed; top: 0; z-index: 50; height: 70px;
         }
-
         .header-left { display: flex; align-items: center; gap: 10px; }
-        header img { width: 35px; height: 35px; cursor: pointer; } /* Курсор для лого */
+        header img { width: 35px; height: 35px; cursor: pointer; } 
         .header-title h1 { font-size: 16px; margin: 0; color: #ccc; }
         .header-title p { font-size: 10px; color: #666; margin: 0; }
-
         .balance-box {
-            background: #252528;
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid #444;
-            font-weight: bold;
-            color: #ffd700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
+            background: #252528; padding: 8px 15px; border-radius: 20px;
+            border: 1px solid #444; font-weight: bold; color: #ffd700;
+            display: flex; align-items: center; gap: 5px; font-size: 14px;
         }
 
         .spacer { height: 90px; }
@@ -92,33 +46,16 @@
 
         /* --- РУЛЕТКА --- */
         .roulette-container {
-            position: relative;
-            width: 95%;
-            max-width: 600px;
-            height: 140px;
-            background: #1a1a1d;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid #333;
-            margin-bottom: 30px;
-            transition: all 0.3s;
+            position: relative; width: 95%; max-width: 600px; height: 140px;
+            background: #1a1a1d; border-radius: 15px; overflow: hidden;
+            border: 2px solid #333; margin-bottom: 30px; transition: all 0.3s;
         }
-
         .roulette-track { display: flex; height: 100%; align-items: center; will-change: transform; }
 
         .app-item {
-            width: 100px;
-            height: 100px;
-            background: #252528;
-            border-radius: 15px;
-            margin: 0 5px; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            border: 1px solid #333;
-            position: relative;
+            width: 100px; height: 100px; background: #252528; border-radius: 15px;
+            margin: 0 5px; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; flex-shrink: 0; border: 1px solid #333; position: relative;
         }
         .app-item img { width: 50px; height: 50px; margin-bottom: 8px; border-radius: 10px; object-fit: cover; }
         .app-item span { font-size: 11px; color: #aaa; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -129,53 +66,46 @@
             box-shadow: 0 0 10px #ffd700; opacity: 0.8;
         }
 
-        /* --- УЛЬТРАБАН СТИЛЬ --- */
-        .app-item.ultra {
-            animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate;
-            border: 3px solid white;
-        }
+        /* --- УЛЬТРАБАН --- */
+        .app-item.ultra { animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate; border: 3px solid white; }
         .app-item.ultra img { animation: hue-spin 1s linear infinite; filter: contrast(150%); }
         .app-item.ultra span { color: black; font-weight: 900; background: white; padding: 2px 5px; border-radius: 4px; }
 
         /* --- СКИНЫ --- */
         .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
-        .skin-paper .app-item:not(.ultra) { background: #e8e0c5; border: 1px solid #c0b393; border-radius: 2px; }
+        .skin-paper .app-item:not(.ultra) { background: #e8e0c5; border: 1px solid #c0b393; }
         .skin-paper .app-item:not(.ultra) span { color: #5a4a32; font-family: 'Courier New', monospace; font-weight: bold; }
-        .skin-paper .center-line { background: #ff0000; width: 2px; }
-
+        
         .skin-retro { border: 4px outset #ccc; background: #008080; }
         .skin-retro .app-item:not(.ultra) { background: #c0c0c0; border: 2px outset #fff; border-radius: 0; }
-        .skin-retro .app-item:not(.ultra) span { color: black; font-family: Tahoma, sans-serif; }
-        .skin-retro .center-line { background: #000080; width: 3px; }
+        .skin-retro .app-item:not(.ultra) span { color: black; font-family: Tahoma; }
 
         .skin-matrix { border: 2px solid #0f0; background: #000; box-shadow: 0 0 15px #0f0; }
         .skin-matrix .app-item:not(.ultra) { background: #050505; border: 1px solid #003300; }
-        .skin-matrix .app-item:not(.ultra) span { color: #0f0; text-shadow: 0 0 5px #0f0; font-family: monospace; }
-        .skin-matrix .center-line { background: #0f0; box-shadow: 0 0 20px #0f0; }
+        .skin-matrix .app-item:not(.ultra) span { color: #0f0; font-family: monospace; }
+        .skin-matrix .center-line { background: #0f0; }
 
         .skin-ussr { border: 4px solid #d32f2f; background: #2b0c0c; }
-        .skin-ussr .app-item:not(.ultra) { background: #d32f2f; border: 2px solid #ffcc00; border-radius: 0; }
-        .skin-ussr .app-item:not(.ultra) span { color: #ffcc00; font-weight: bold; text-transform: uppercase; }
-        .skin-ussr .center-line { background: #ffcc00; width: 5px; }
+        .skin-ussr .app-item:not(.ultra) { background: #d32f2f; border: 2px solid #ffcc00; }
+        .skin-ussr .app-item:not(.ultra) span { color: #ffcc00; font-weight: bold; }
+        .skin-ussr .center-line { background: #ffcc00; }
 
         .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; background: #000; }
         .skin-neon .app-item:not(.ultra) { background: rgba(0, 243, 255, 0.05); border: 1px solid #00f3ff; }
         .skin-neon .app-item:not(.ultra) span { color: #00f3ff; }
-        .skin-neon .center-line { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
+        .skin-neon .center-line { background: #ff00ff; }
 
         .skin-gold { border: 3px solid #ffd700; animation: pulse-gold 2s infinite; background: #1a1a1a; }
         .skin-gold .app-item:not(.ultra) { background: linear-gradient(135deg, #333, #000); border: 1px solid #ffd700; }
         .skin-gold .app-item:not(.ultra) span { color: #ffd700; }
-        .skin-gold .center-line { background: #fff; box-shadow: 0 0 20px #fff; }
 
         .skin-lava { border: 4px solid #ff4500; background: linear-gradient(45deg, #ff0000, #ff4500); }
         .skin-lava .app-item:not(.ultra) { background: rgba(0,0,0,0.6); border: 1px solid #ff4500; }
-        .skin-lava .app-item:not(.ultra) span { color: #ffae00; font-weight: bold; }
-        .skin-lava .center-line { background: #ffff00; box-shadow: 0 0 15px #ff4500; }
+        .skin-lava .app-item:not(.ultra) span { color: #ffae00; }
 
         .skin-ice { border: 4px solid #a5f2f3; background: #e0f7fa; box-shadow: 0 0 20px #a5f2f3; }
         .skin-ice .app-item:not(.ultra) { background: rgba(255,255,255,0.8); border: 1px solid #00bcd4; }
-        .skin-ice .app-item:not(.ultra) span { color: #006064; font-weight: bold; }
+        .skin-ice .app-item:not(.ultra) span { color: #006064; }
         
         .skin-glitch { border: 2px solid white; background: #111; animation: glitch 0.3s infinite; }
         .skin-glitch .app-item:not(.ultra) { background: #222; border: 1px dashed white; }
@@ -183,11 +113,9 @@
         
         .skin-rgb { border: 5px solid red; animation: rainbow 2s linear infinite; background: #000; }
         .skin-rgb .app-item:not(.ultra) { background: #111; border: 1px solid #333; }
-        .skin-rgb .app-item:not(.ultra) span { color: white; }
-        
+
         .skin-oil { border: 5px solid #000; background: #1c1c1c; box-shadow: inset 0 0 50px #000; }
         .skin-oil .app-item:not(.ultra) { background: linear-gradient(to bottom, #333, #000); border: 1px solid #444; }
-        .skin-oil .app-item:not(.ultra) span { color: #888; }
         .skin-oil .center-line { background: #000; width: 6px; border: 1px solid #333; }
 
         .skin-space { border: 3px solid #9c27b0; background: radial-gradient(circle, #311b92 0%, #000000 100%); box-shadow: 0 0 30px #9c27b0; }
@@ -196,16 +124,14 @@
 
         .skin-illuminati { border: 3px double #33ff00; background: #001a00; }
         .skin-illuminati .app-item:not(.ultra) { background: #000; border: 1px solid #33ff00; transform: rotate(1deg); }
-        .skin-illuminati .center-line { background: #33ff00; width: 1px; box-shadow: 0 0 50px #33ff00; }
+        .skin-illuminati .center-line { background: #33ff00; box-shadow: 0 0 50px #33ff00; }
 
         .skin-blackhole { border: none; background: #000; animation: blackhole 5s infinite; box-shadow: 0 0 50px #000; }
         .skin-blackhole .app-item:not(.ultra) { background: #000; border: 1px solid #222; border-radius: 50%; transform: scale(0.9); }
         .skin-blackhole .app-item:not(.ultra) span { color: #444; font-size: 8px; }
-        .skin-blackhole .center-line { background: white; width: 1px; box-shadow: 0 0 20px white; }
 
         .skin-multiverse { border: 5px dashed #ff00ff; background: url('https://media.giphy.com/media/26tOZ42Mg6pbTUPvy/giphy.gif'); background-size: cover; }
         .skin-multiverse .app-item:not(.ultra) { background: rgba(255,255,255,0.2); border: 2px solid white; backdrop-filter: blur(5px); }
-        .skin-multiverse .app-item:not(.ultra) span { color: white; text-shadow: 2px 2px 0 #000; }
 
         .skin-timelord { border: 5px double #c0a062; background: #161005; box-shadow: inset 0 0 100px #524220; }
         .skin-timelord .app-item:not(.ultra) { border: 1px solid #c0a062; background: transparent; transform: skewX(-10deg); }
@@ -214,9 +140,9 @@
         .skin-admin { border: 5px solid white; background: #fff; box-shadow: 0 0 100px white; }
         .skin-admin .app-item:not(.ultra) { background: white; border: 2px solid #ddd; }
         .skin-admin .app-item:not(.ultra) span { color: #000; font-weight: 900; }
-        .skin-admin .center-line { background: #000; width: 5px; }
+        .skin-admin .center-line { background: #000; }
 
-        .skin-the-end { border: 10px solid #ff0000; background: #000; animation: shake-hard 0.2s infinite; box-shadow: 0 0 100px red, inset 0 0 100px red; }
+        .skin-the-end { border: 10px solid #ff0000; background: #000; animation: shake-hard 0.2s infinite; box-shadow: 0 0 100px red; }
         .skin-the-end .app-item:not(.ultra) { background: #200000; border: 2px solid red; filter: contrast(200%) grayscale(100%); }
         .skin-the-end .app-item:not(.ultra) img { filter: invert(1); }
         .skin-the-end .app-item:not(.ultra) span { color: red; font-family: 'Courier New'; text-transform: uppercase; }
@@ -236,21 +162,21 @@
         .spin-btn.active { background: #ffd700; color: black; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
         .shop-btn { background: #4285f4; color: white; box-shadow: 0 0 20px rgba(66, 133, 244, 0.3); }
 
-        /* ТАЙМЕР БУСТА */
-        .boost-timer {
-            margin-top: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00;
-            display: none; /* Скрыт по умолчанию */
-            background: rgba(0, 50, 0, 0.5);
-            padding: 5px 15px;
-            border-radius: 10px;
-            border: 1px solid #00ff00;
+        /* СПИСОК ЭФФЕКТОВ */
+        .effects-container {
+            width: 90%; max-width: 400px; margin-top: 15px; display: flex; flex-direction: column; gap: 5px;
         }
+        .effect-badge {
+            font-size: 14px; font-weight: bold; padding: 8px 15px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            text-shadow: 1px 1px 0 #000;
+        }
+        .eff-green { background: rgba(0, 100, 0, 0.6); border: 1px solid #00ff00; color: #00ff00; }
+        .eff-purple { background: rgba(80, 0, 80, 0.6); border: 1px solid #ff00ff; color: #ff00ff; }
+        .eff-blue { background: rgba(0, 0, 100, 0.6); border: 1px solid #00ffff; color: #00ffff; }
+        .eff-red { background: rgba(100, 0, 0, 0.6); border: 1px solid #ff0000; color: #ff0000; }
 
-        /* --- МОДАЛКИ --- */
+        /* МОДАЛКИ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9); display: none;
@@ -273,7 +199,6 @@
 
         .take-btn { background: #ffd700; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
 
-        /* Магазин Стили */
         .shop-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 15px; }
         .shop-item { 
             background: #2a2a2d; padding: 12px; border-radius: 12px; 
@@ -283,6 +208,7 @@
         .item-mult { color: #00e676; font-size: 11px; font-weight: bold; }
         .buy-btn { background: #4caf50; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 70px; }
         .buy-btn.equipped { background: #ffd700; color: black; cursor: default; }
+        .old-price { text-decoration: line-through; color: #888; font-size: 10px; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -313,7 +239,7 @@
         <button id="spinBtn" class="btn spin-btn active" onclick="spinRoulette()">КРУТИТЬ</button>
     </div>
     
-    <div id="boostTimer" class="boost-timer">БУСТ: 15:00</div>
+    <div id="effectsContainer" class="effects-container"></div>
 
     <div class="modal-overlay" id="actionModal">
         <div class="modal-card">
@@ -346,27 +272,20 @@
 
     <script>
         const apps = [
-            { name: "CapCut", img: "capcut.png" }, { name: "ChatGPT", img: "chatgpt.png" },
-            { name: "WhatsApp", img: "whatsapp.png" }, { name: "X (Twitter)", img: "x.png" },
-            { name: "Zoom", img: "zoom.png" }, { name: "Teams", img: "teams.png" },
-            { name: "TikTok", img: "tiktok.png" }, { name: "YouTube", img: "youtube.png" },
-            { name: "Discord", img: "discord.png" }, { name: "Telegram", img: "telegram.png" },
-            { name: "Instagram", img: "instagram.png" }, { name: "Facebook", img: "facebook.png" },
-            { name: "Twitch", img: "twitch.png" }, { name: "Spotify", img: "spotify.png" },
-            { name: "Netflix", img: "netflix.png" }, { name: "Steam", img: "steam.png" },
-            { name: "Roblox", img: "roblox.png" }, { name: "Pinterest", img: "pinterest.png" },
-            { name: "Reddit", img: "reddit.png" }, { name: "Snapchat", img: "snapchat.png" },
-            { name: "LinkedIn", img: "linkedin.png" }, { name: "GitHub", img: "github.png" },
-            { name: "Wikipedia", img: "wikipedia.png" }, { name: "Google", img: "google.png" },
-            { name: "Amazon", img: "amazon.png" }, { name: "Viber", img: "viber.png" },
-            { name: "Signal", img: "signal.png" }, { name: "Skype", img: "skype.png" },
-            { name: "SoundCloud", img: "soundcloud.png" }, { name: "Minecraft", img: "minecraft.png" },
+            { name: "CapCut", img: "capcut.png" }, { name: "ChatGPT", img: "chatgpt.png" }, { name: "WhatsApp", img: "whatsapp.png" },
+            { name: "X (Twitter)", img: "x.png" }, { name: "Zoom", img: "zoom.png" }, { name: "Teams", img: "teams.png" },
+            { name: "TikTok", img: "tiktok.png" }, { name: "YouTube", img: "youtube.png" }, { name: "Discord", img: "discord.png" },
+            { name: "Telegram", img: "telegram.png" }, { name: "Instagram", img: "instagram.png" }, { name: "Facebook", img: "facebook.png" },
+            { name: "Twitch", img: "twitch.png" }, { name: "Spotify", img: "spotify.png" }, { name: "Netflix", img: "netflix.png" },
+            { name: "Steam", img: "steam.png" }, { name: "Roblox", img: "roblox.png" }, { name: "Pinterest", img: "pinterest.png" },
+            { name: "Reddit", img: "reddit.png" }, { name: "Snapchat", img: "snapchat.png" }, { name: "LinkedIn", img: "linkedin.png" },
+            { name: "GitHub", img: "github.png" }, { name: "Wikipedia", img: "wikipedia.png" }, { name: "Google", img: "google.png" },
+            { name: "Amazon", img: "amazon.png" }, { name: "Viber", img: "viber.png" }, { name: "Signal", img: "signal.png" },
+            { name: "Skype", img: "skype.png" }, { name: "SoundCloud", img: "soundcloud.png" }, { name: "Minecraft", img: "minecraft.png" },
             { name: "Brawl Stars", img: "brawlstars.png" }, { name: "Likee", img: "likee.png" }
         ];
 
-        // --- МУЗЫКА ---
-        const rknAudio = new Audio('RKN.mp3');
-        rknAudio.loop = true; 
+        const rknAudio = new Audio('RKN.mp3'); rknAudio.loop = true; 
 
         // --- СПИСОК ТОВАРОВ ---
         const shopItems = [
@@ -392,22 +311,37 @@
             { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' }
         ];
 
+        // --- ДАННЫЕ ПРОМОКОДОВ ---
+        const promoCodes = {
+            "RKNPIDORI": { type: "boost", duration: 15*60, val: 0.3, msg: "УЛЬТРАБАН 30% (15 мин)" },
+            "GOSDUMA": { type: "money", val: 50000000, msg: "Грант от Госдумы: +50,000,000 ₽" },
+            "X2": { type: "multiply_balance", val: 2, msg: "Удвоение текущего бюджета!" },
+            "TOTALBLOCK": { type: "next_spin_ultra", val: true, msg: "Следующий спин - 100% УЛЬТРАБАН!" },
+            "CORRUPTION": { type: "shop_discount", val: 0.5, duration: 10*60, msg: "Скидка 50% в магазине (10 мин)" },
+            "MINING": { type: "global_mult", val: 5, duration: 5*60, msg: "Майнинг: Доход x5 (5 мин)" },
+            "FREENEON": { type: "unlock_skin", val: "neon", msg: "Скин Cyber RKN получен!" },
+            "FLASH": { type: "speed_spin", duration: 3*60, msg: "Мгновенные спины (3 мин)" },
+            "POOR": { type: "reset_money", msg: "Баланс сброшен... Зато честно." },
+            "SECRET": { type: "random_money", msg: "Секретная награда получена!" }
+        };
+
+        // --- СОСТОЯНИЕ ---
         let balance = parseInt(localStorage.getItem('rkn_balance')) || 0;
         let inventory = JSON.parse(localStorage.getItem('rkn_inventory')) || ['default'];
+        let usedCodes = JSON.parse(localStorage.getItem('rkn_used_codes')) || [];
         let currentSkinId = localStorage.getItem('rkn_skin') || 'default';
         let currentWinAmount = 0;
         
-        // --- ПЕРЕМЕННЫЕ ДЛЯ КОДА ---
         let logoClicks = 0;
         let clickResetTimer;
-        let isBoostActive = false;
-        let boostInterval;
-        let codeUsed = localStorage.getItem('rkn_code_used') === 'true'; // Проверка использован ли код
+        let uiUpdateInterval;
 
-        const CARD_WIDTH = 100; 
-        const MARGIN_SIDE = 5;  
-        const SLOT_WIDTH = CARD_WIDTH + (MARGIN_SIDE * 2);
+        // Активные эффекты { id: timestamp_end }
+        let activeEffects = JSON.parse(localStorage.getItem('rkn_active_effects')) || {};
+        // Флаги (не сохраняемые)
+        let forceUltra = false; 
 
+        const CARD_WIDTH = 100; const MARGIN_SIDE = 5; const SLOT_WIDTH = CARD_WIDTH + (MARGIN_SIDE * 2);
         const track = document.getElementById('track');
         let isSpinning = false;
         let rouletteList = [];
@@ -415,35 +349,26 @@
         function init() {
             updateBalanceUI();
             applySkin(currentSkinId);
-            checkBoostStatus(); // Проверяем активен ли буст при загрузке
+            startEffectsLoop();
             
-            if(currentSkinId === 'the_end') {
-                rknAudio.play().catch(e => console.log("Нужен клик для музыки"));
-            }
+            if(currentSkinId === 'the_end') { rknAudio.play().catch(e => console.log("")); }
 
-            // Очищаем трек перед генерацией (важно для активации буста)
             track.innerHTML = '';
             rouletteList = [];
 
-            // --- ГЕНЕРАЦИЯ ЛЕНТЫ ---
-            // Шанс ультрабана зависит от буста
-            const ultraChance = isBoostActive ? 0.3 : 0.005; // 30% если буст, иначе 0.5%
+            // Проверка буста на ультрабан
+            const boostEndTime = activeEffects['RKNPIDORI'] || 0;
+            const ultraChance = (boostEndTime > Date.now()) ? 0.3 : 0.005;
 
             for(let i=0; i<50; i++) {
                 let batch = [...apps];
                 batch.sort(() => Math.random() - 0.5);
-                
                 batch = batch.map(app => {
                     if(Math.random() < ultraChance) { 
-                        return { 
-                            name: "УЛЬТРАБАН", 
-                            img: "logo.png",
-                            isUltra: true 
-                        };
+                        return { name: "УЛЬТРАБАН", img: "logo.png", isUltra: true };
                     }
                     return app;
                 });
-
                 rouletteList = rouletteList.concat(batch);
             }
             
@@ -456,125 +381,177 @@
         }
         init();
 
-        // --- ЛОГИКА СЕКРЕТНОГО КОДА ---
+        // --- СИСТЕМА ПРОМОКОДОВ ---
         function handleLogoClick() {
             logoClicks++;
-            
-            // Сброс счетчика кликов если пауза больше 1 сек
             clearTimeout(clickResetTimer);
-            clickResetTimer = setTimeout(() => {
-                logoClicks = 0;
-            }, 1000);
-
+            clickResetTimer = setTimeout(() => { logoClicks = 0; }, 1000);
             if(logoClicks >= 10) {
                 logoClicks = 0;
-                if(codeUsed) {
-                    alert("Промокод уже был использован!");
-                    return;
-                }
                 askForCode();
             }
         }
 
         function askForCode() {
-            const code = prompt("Введите секретный код разработчика:");
-            if(code === "RKNPIDORI") {
-                activateBoost();
-            } else if (code) {
+            const code = prompt("Введите секретный код:");
+            if(!code) return;
+            
+            const upperCode = code.toUpperCase().trim();
+            if(usedCodes.includes(upperCode)) {
+                alert("Этот код уже был использован!");
+                return;
+            }
+
+            if(promoCodes[upperCode]) {
+                activateCode(upperCode, promoCodes[upperCode]);
+            } else {
                 alert("Неверный код!");
             }
         }
 
-        function activateBoost() {
-            alert("ПРОМОКОД АКТИВИРОВАН! ШАНС УЛЬТРАБАНА 30% НА 15 МИНУТ!");
-            
-            // Сохраняем время окончания (текущее + 15 минут)
-            const endTime = Date.now() + 15 * 60 * 1000;
-            localStorage.setItem('rkn_boost_end', endTime);
-            
-            // Помечаем что код использован
-            localStorage.setItem('rkn_code_used', 'true');
-            codeUsed = true;
+        function activateCode(codeStr, data) {
+            usedCodes.push(codeStr);
+            localStorage.setItem('rkn_used_codes', JSON.stringify(usedCodes));
+            alert(data.msg);
 
-            checkBoostStatus();
-            init(); // Перегенерируем ленту с новым шансом
+            if(data.type === 'money') {
+                balance += data.val;
+                saveBalance();
+            } else if (data.type === 'multiply_balance') {
+                balance *= data.val;
+                saveBalance();
+            } else if (data.type === 'reset_money') {
+                balance = 0;
+                saveBalance();
+            } else if (data.type === 'random_money') {
+                balance += Math.floor(Math.random() * 100000000) + 1;
+                saveBalance();
+            } else if (data.type === 'unlock_skin') {
+                if(!inventory.includes(data.val)) {
+                    inventory.push(data.val);
+                    localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
+                } else {
+                    balance += 1000000; // Компенсация
+                    alert("Скин уже есть. Компенсация: 1,000,000 ₽");
+                    saveBalance();
+                }
+            } else if (data.type === 'next_spin_ultra') {
+                forceUltra = true;
+            } else if (data.duration) {
+                // Эффекты с таймером
+                activeEffects[codeStr] = Date.now() + (data.duration * 1000);
+                localStorage.setItem('rkn_active_effects', JSON.stringify(activeEffects));
+                // Если это буст шанса, надо перегенерировать ленту
+                if(codeStr === 'RKNPIDORI') init();
+            }
+            
+            updateBalanceUI();
         }
 
-        function checkBoostStatus() {
-            const endTime = parseInt(localStorage.getItem('rkn_boost_end'));
-            
-            if (endTime && endTime > Date.now()) {
-                isBoostActive = true;
-                document.getElementById('boostTimer').style.display = 'block';
-                
-                // Запуск таймера
-                if (boostInterval) clearInterval(boostInterval);
-                boostInterval = setInterval(() => {
-                    const now = Date.now();
-                    const left = endTime - now;
-                    
-                    if (left <= 0) {
-                        // Время вышло
-                        clearInterval(boostInterval);
-                        isBoostActive = false;
-                        document.getElementById('boostTimer').style.display = 'none';
-                        localStorage.removeItem('rkn_boost_end');
-                        init(); // Возвращаем обычный шанс
-                    } else {
-                        // Обновляем текст
+        function saveBalance() {
+            localStorage.setItem('rkn_balance', balance);
+            updateBalanceUI();
+        }
+
+        // --- ЦИКЛ ЭФФЕКТОВ ---
+        function startEffectsLoop() {
+            if(uiUpdateInterval) clearInterval(uiUpdateInterval);
+            uiUpdateInterval = setInterval(() => {
+                const now = Date.now();
+                const container = document.getElementById('effectsContainer');
+                container.innerHTML = '';
+                let hasActive = false;
+
+                for (const [code, endTime] of Object.entries(activeEffects)) {
+                    if (endTime > now) {
+                        hasActive = true;
+                        const left = endTime - now;
                         const min = Math.floor(left / 60000);
                         const sec = Math.floor((left % 60000) / 1000);
-                        document.getElementById('boostTimer').innerText = 
-                            `БУСТ: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+                        
+                        const div = document.createElement('div');
+                        let colorClass = 'eff-green';
+                        let label = code;
+
+                        if(code === 'RKNPIDORI') { colorClass = 'eff-green'; label = "УЛЬТРАБАН 30%"; }
+                        if(code === 'CORRUPTION') { colorClass = 'eff-purple'; label = "СКИДКА 50%"; }
+                        if(code === 'MINING') { colorClass = 'eff-blue'; label = "ДОХОД x5"; }
+                        if(code === 'FLASH') { colorClass = 'eff-red'; label = "БЫСТРЫЙ СПИН"; }
+
+                        div.className = `effect-badge ${colorClass}`;
+                        div.innerHTML = `<span>${label}</span><span>${min}:${sec < 10 ? '0' : ''}${sec}</span>`;
+                        container.appendChild(div);
+                    } else {
+                        // Эффект закончился
+                        delete activeEffects[code];
+                        localStorage.setItem('rkn_active_effects', JSON.stringify(activeEffects));
+                        if(code === 'RKNPIDORI') init(); // Вернуть обычный шанс
                     }
-                }, 1000);
-            } else {
-                isBoostActive = false;
-                document.getElementById('boostTimer').style.display = 'none';
-            }
+                }
+            }, 1000);
         }
 
         // --- РУЛЕТКА ---
-
         function spinRoulette() {
             if (isSpinning) return;
             isSpinning = true;
             document.getElementById('spinBtn').classList.remove('active');
 
-            const stopIndex = Math.floor(Math.random() * 500) + 500; 
-            const selectedApp = rouletteList[stopIndex];
+            // Проверка на форс ультра
+            let selectedApp, stopIndex;
+            
+            if (forceUltra) {
+                // Найти ближайший ультрабан
+                stopIndex = rouletteList.findIndex((item, idx) => idx > 300 && item.isUltra);
+                if(stopIndex === -1) { 
+                    // Если вдруг не нашли, создадим фейковый
+                    stopIndex = 500;
+                    rouletteList[stopIndex] = { name: "УЛЬТРАБАН", img: "logo.png", isUltra: true };
+                }
+                forceUltra = false; // Сброс флага
+            } else {
+                stopIndex = Math.floor(Math.random() * 500) + 500; 
+            }
+            
+            selectedApp = rouletteList[stopIndex];
 
             const containerCenter = document.getElementById('rouletteBox').offsetWidth / 2;
             const itemLeftPos = (stopIndex * SLOT_WIDTH) + MARGIN_SIDE;
             const itemCenterPos = itemLeftPos + (CARD_WIDTH / 2);
             const offset = -(itemCenterPos - containerCenter);
 
-            track.style.transition = "transform 4s cubic-bezier(0.1, 0.9, 0.2, 1)";
+            // Проверка на быстрый спин
+            const isFlash = (activeEffects['FLASH'] || 0) > Date.now();
+            const duration = isFlash ? 0.5 : 4;
+
+            track.style.transition = `transform ${duration}s cubic-bezier(0.1, 0.9, 0.2, 1)`;
             track.style.transform = `translateX(${offset}px)`;
 
             setTimeout(() => {
                 showActionChoice(selectedApp);
                 isSpinning = false;
-            }, 4000);
+            }, duration * 1000);
         }
 
         function showActionChoice(app) {
-            if(app.isUltra) {
-                triggerUltraReward();
-                return;
-            }
-
+            if(app.isUltra) { triggerUltraReward(); return; }
             document.getElementById('selectedAppImg').src = app.img;
             document.getElementById('selectedAppName').innerText = app.name;
             document.getElementById('actionModal').style.display = 'flex';
         }
 
+        function getGlobalMultiplier() {
+            let m = 1;
+            if((activeEffects['MINING'] || 0) > Date.now()) m *= 5;
+            return m;
+        }
+
         function triggerUltraReward() {
             const basePool = 200000 * 32; 
             const skinData = shopItems.find(i => i.id === currentSkinId);
-            const multiplier = skinData ? skinData.mult : 1;
+            const skinMult = skinData ? skinData.mult : 1;
             
-            currentWinAmount = basePool * multiplier;
+            currentWinAmount = basePool * skinMult * getGlobalMultiplier();
 
             const stamp = document.getElementById('resultStamp');
             stamp.innerText = "УЛЬТРАБАН";
@@ -587,7 +564,6 @@
 
         function chooseAction(type) {
             document.getElementById('actionModal').style.display = 'none';
-            
             const stamp = document.getElementById('resultStamp');
             stamp.innerText = type;
             stamp.style.animation = "none";
@@ -601,10 +577,10 @@
             if(type === 'ЗАБАНИТЬ') { min = 100000; max = 200000; }
 
             const skinData = shopItems.find(i => i.id === currentSkinId);
-            const multiplier = skinData ? skinData.mult : 1;
+            const skinMult = skinData ? skinData.mult : 1;
 
-            min *= multiplier;
-            max *= multiplier;
+            min *= skinMult * getGlobalMultiplier();
+            max *= skinMult * getGlobalMultiplier();
 
             const rawMoney = Math.floor(Math.random() * (max - min + 1)) + min;
             currentWinAmount = Math.ceil(rawMoney / 100) * 100;
@@ -615,9 +591,7 @@
 
         function collectMoney() {
             balance += currentWinAmount;
-            localStorage.setItem('rkn_balance', balance);
-            updateBalanceUI();
-            
+            saveBalance();
             document.getElementById('rewardModal').style.display = 'none';
             document.getElementById('spinBtn').classList.add('active');
             track.style.transition = "none";
@@ -628,9 +602,12 @@
             document.getElementById('balanceDisplay').innerText = balance.toLocaleString();
         }
 
+        // --- МАГАЗИН ---
         function openShop() {
             const list = document.getElementById('shopList');
             list.innerHTML = '';
+            
+            const isDiscount = (activeEffects['CORRUPTION'] || 0) > Date.now();
 
             shopItems.forEach(item => {
                 const div = document.createElement('div');
@@ -639,13 +616,22 @@
                 const isOwned = inventory.includes(item.id);
                 const isEquipped = currentSkinId === item.id;
                 
+                // Расчет цены
+                let finalPrice = item.price;
+                let priceHtml = item.price > 0 ? item.price.toLocaleString() : 'Бесплатно';
+                
+                if(isDiscount && item.price > 0) {
+                    finalPrice = Math.floor(item.price * 0.5);
+                    priceHtml = `<span class="old-price">${item.price.toLocaleString()}</span> <span style="color:#00ff00">${finalPrice.toLocaleString()}</span>`;
+                }
+
                 let btnHtml = '';
                 if (isEquipped) {
                     btnHtml = `<button class="buy-btn equipped">Надето</button>`;
                 } else if (isOwned) {
                     btnHtml = `<button class="buy-btn" style="background:#2196f3" onclick="equip('${item.id}')">Надеть</button>`;
                 } else {
-                    btnHtml = `<button class="buy-btn" onclick="buy('${item.id}', ${item.price})">Купить</button>`;
+                    btnHtml = `<button class="buy-btn" onclick="buy('${item.id}', ${finalPrice})">Купить</button>`;
                 }
 
                 div.innerHTML = `
@@ -653,7 +639,7 @@
                         <div style="font-weight:bold; font-size:15px;">${item.name}</div>
                         <div style="font-size:11px; color:#aaa">${item.desc}</div>
                         <div class="item-mult">Доход: x${item.mult}</div>
-                        <div style="color:#ffd700; font-size:13px; margin-top:2px">${item.price > 0 ? item.price.toLocaleString() : 'Бесплатно'}</div>
+                        <div style="color:#ffd700; font-size:13px; margin-top:2px">${priceHtml}</div>
                     </div>
                     ${btnHtml}
                 `;
@@ -671,7 +657,7 @@
                 localStorage.setItem('rkn_balance', balance);
                 localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
                 updateBalanceUI();
-                openShop();
+                openShop(); // Обновить чтобы кнопки сменились
             } else {
                 alert("Нужно больше денег!");
             }
@@ -681,15 +667,8 @@
             currentSkinId = id;
             localStorage.setItem('rkn_skin', id);
             applySkin(id);
-
-            if(id === 'the_end') {
-                rknAudio.currentTime = 0;
-                rknAudio.play().catch(e => console.log(e));
-            } else {
-                rknAudio.pause();
-                rknAudio.currentTime = 0;
-            }
-
+            if(id === 'the_end') { rknAudio.currentTime = 0; rknAudio.play().catch(e => console.log(e)); } 
+            else { rknAudio.pause(); rknAudio.currentTime = 0; }
             openShop();
         }
 
@@ -702,4 +681,3 @@
     </script>
 </body>
 </html>
- 
