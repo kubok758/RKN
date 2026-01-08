@@ -15,25 +15,7 @@
             user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- АНИМАЦИИ ОБЩИЕ --- */
-        @keyframes shine { 
-            0% { left: -100%; opacity: 0; } 
-            50% { opacity: 0.5; }
-            100% { left: 200%; opacity: 0; } 
-        }
-        @keyframes rgb-bg-flash { 0% { background-color: #ff0000; } 50% { background-color: #00ff00; } 100% { background-color: #0000ff; } }
-        @keyframes hue-spin { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
-        @keyframes ultra-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes vpn-pulse { 0% { box-shadow: 0 0 5px red; } 50% { box-shadow: 0 0 15px red; } 100% { box-shadow: 0 0 5px red; } }
-        @keyframes rainbow { 0% { border-color: red; box-shadow: 0 0 20px red; } 100% { border-color: blue; box-shadow: 0 0 20px blue; } }
-        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
-        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 100% { transform: translate(0); } }
-        @keyframes blackhole { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
-        @keyframes shake-hard { 0% { transform: translate(1px, 1px); } 100% { transform: translate(-1px, -2px); } }
-        @keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* --- АНИМАЦИИ ДЛЯ НОВОГО НЕОНОВОГО КРИСТАЛЛА --- */
+        /* --- АНИМАЦИИ --- */
         @keyframes neon-flow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -53,6 +35,17 @@
                 border-color: rgba(80, 0, 255, 0.3); 
             }
         }
+        @keyframes rgb-bg-flash { 0% { background-color: #ff0000; } 50% { background-color: #00ff00; } 100% { background-color: #0000ff; } }
+        @keyframes hue-spin { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+        @keyframes ultra-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes vpn-pulse { 0% { box-shadow: 0 0 5px red; } 50% { box-shadow: 0 0 15px red; } 100% { box-shadow: 0 0 5px red; } }
+        @keyframes rainbow { 0% { border-color: red; box-shadow: 0 0 20px red; } 100% { border-color: blue; box-shadow: 0 0 20px blue; } }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
+        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 100% { transform: translate(0); } }
+        @keyframes blackhole { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
+        @keyframes shake-hard { 0% { transform: translate(1px, 1px); } 100% { transform: translate(-1px, -2px); } }
+        @keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* --- ИНТЕРФЕЙС --- */
         header {
@@ -113,42 +106,34 @@
 
         /* --- НОВЫЙ ТОПОВЫЙ СКИН: NEON LIQUID (Dark VIP) --- */
         .skin-omniscience {
-            /* Темная, глубокая основа */
             background: #050505;
             border-radius: 24px;
             border: 2px solid rgba(80, 0, 255, 0.3);
-            /* Анимация дыхания рамки и теней */
             animation: neon-breathe 4s ease-in-out infinite;
             overflow: hidden;
             position: relative;
         }
-
-        /* Эффект текущего неонового стекла (Фиолетовый/Синий/Черный) */
         .skin-omniscience::before {
             content: ''; position: absolute; top: -50%; left: -50%; right: -50%; bottom: -50%;
             background: linear-gradient(125deg, 
                 rgba(0,0,0,0.9) 20%, 
-                rgba(80, 0, 255, 0.4) 40%, /* Purple Neon */
-                rgba(0, 0, 0, 0.95) 50%,   /* Black Void */
-                rgba(0, 200, 255, 0.4) 60%, /* Cyan Neon */
+                rgba(80, 0, 255, 0.4) 40%, 
+                rgba(0, 0, 0, 0.95) 50%,   
+                rgba(0, 200, 255, 0.4) 60%, 
                 rgba(0,0,0,0.9) 80%);
             background-size: 300% 300%;
-            /* Наложение "Color Dodge" или "Overlay" создает эффект света внутри стекла */
             mix-blend-mode: screen; 
             animation: neon-flow 6s ease infinite;
             pointer-events: none;
             z-index: 20;
             opacity: 0.8;
         }
-
-        /* Стиль иконок внутри */
         .skin-omniscience .app-item:not(.ultra) {
             background: rgba(10, 10, 20, 0.8);
             border: 1px solid rgba(100, 100, 255, 0.1);
             box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-            z-index: 21; /* Поверх фона */
+            z-index: 21;
         }
-        /* ЧБ фильтр с легким синим оттенком */
         .skin-omniscience .app-item:not(.ultra) img {
             filter: grayscale(100%) contrast(1.5) drop-shadow(0 0 5px rgba(0, 150, 255, 0.5));
         }
@@ -161,12 +146,11 @@
         }
         .skin-omniscience .center-line {
             background: #fff; width: 2px;
-            box-shadow: 0 0 15px #fff, 0 0 30px #00f3ff; /* Белый центр с голубым свечением */
+            box-shadow: 0 0 15px #fff, 0 0 30px #00f3ff;
             z-index: 30;
         }
 
-
-        /* --- ОСТАЛЬНЫЕ СКИНЫ (ВОССТАНОВЛЕНЫ) --- */
+        /* --- ОСТАЛЬНЫЕ СКИНЫ --- */
         .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
         .skin-paper .app-item:not(.ultra) { background: #e8e0c5; border: 1px solid #c0b393; }
         .skin-paper .app-item:not(.ultra) span { color: #5a4a32; font-family: monospace; font-weight: bold; }
@@ -245,7 +229,6 @@
         .skin-admin .app-item:not(.ultra) span { color: #000; font-weight: 900; }
         .skin-admin .center-line { background: #000; width: 5px; }
 
-        /* The End (Старый VIP) */
         .skin-the-end { border: 10px solid #ff0000; background: #000; animation: shake-hard 0.2s infinite; box-shadow: 0 0 100px red; }
         .skin-the-end .app-item:not(.ultra) { background: #200000; border: 2px solid red; filter: contrast(200%) grayscale(100%); }
         .skin-the-end .app-item:not(.ultra) img { filter: invert(1); }
@@ -450,7 +433,11 @@
             { name: "Brawl Stars", img: "brawlstars.png" }, { name: "Likee", img: "likee.png" }
         ];
 
-        const rknAudio = new Audio('RKN.mp3'); rknAudio.loop = true; 
+        // АУДИО ОБЪЕКТЫ
+        const rknAudio = new Audio('RKN.mp3'); 
+        rknAudio.loop = true;
+        const rknPhonk = new Audio('RKN_PHONK.mp3'); 
+        rknPhonk.loop = true;
 
         // ТОВАРЫ
         const skinItems = [
@@ -474,7 +461,7 @@
             { id: 'timelord', name: 'Повелитель Времени', price: 5000000000000, mult: 500.0, desc: 'Замедление времени', class: 'skin-timelord' },
             { id: 'admin', name: 'Админ Реальности', price: 20000000000000, mult: 1000.0, desc: 'Удаление вселенной', class: 'skin-admin' },
             { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' },
-            { id: 'omniscience', name: 'КРИСТАЛЛ ВСЕВЕДЕНИЯ', price: 500000000000000, mult: 50000.0, desc: 'VIP: Dark Neon Liquid', class: 'skin-omniscience' }
+            { id: 'omniscience', name: 'КРИСТАЛЛ ВСЕВЕДЕНИЯ', price: 500000000000000, mult: 50000.0, desc: 'VIP: Dark Neon Liquid ♫', class: 'skin-omniscience' }
         ];
 
         const afkItems = [
@@ -552,7 +539,9 @@
             startVPNLogic();
             startRandomEvents();
 
-            if(currentSkinId === 'the_end') { rknAudio.play().catch(e => console.log("")); }
+            if(currentSkinId === 'the_end') { rknAudio.play().catch(e => {}); }
+            if(currentSkinId === 'omniscience') { rknPhonk.play().catch(e => {}); }
+
             generateRoulette();
         }
 
@@ -1063,8 +1052,17 @@
         function equip(id) {
             currentSkinId = id; localStorage.setItem('rkn_skin', id);
             applySkin(id);
-            if(id === 'the_end') { rknAudio.currentTime = 0; rknAudio.play().catch(e=>{}); } 
-            else { rknAudio.pause(); rknAudio.currentTime = 0; }
+            
+            // --- ЛОГИКА МУЗЫКИ ---
+            rknAudio.pause(); rknAudio.currentTime = 0;
+            rknPhonk.pause(); rknPhonk.currentTime = 0;
+
+            if(id === 'the_end') { 
+                rknAudio.play().catch(e => console.log(e)); 
+            } else if (id === 'omniscience') {
+                rknPhonk.play().catch(e => console.log(e));
+            }
+
             renderSkins();
         }
 
@@ -1078,4 +1076,4 @@
         init();
     </script>
 </body>
-</html> 
+</html>
