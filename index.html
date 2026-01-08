@@ -35,11 +35,13 @@
         header img { width: 35px; height: 35px; cursor: pointer; } 
         .header-title h1 { font-size: 16px; margin: 0; color: #ccc; }
         .header-title p { font-size: 10px; color: #666; margin: 0; }
+        .balance-group { display: flex; flex-direction: column; align-items: flex-end; }
         .balance-box {
-            background: #252528; padding: 8px 15px; border-radius: 20px;
+            background: #252528; padding: 5px 15px; border-radius: 20px;
             border: 1px solid #444; font-weight: bold; color: #ffd700;
             display: flex; align-items: center; gap: 5px; font-size: 14px;
         }
+        .income-info { font-size: 10px; color: #00ff00; margin-top: 3px; margin-right: 5px; }
 
         .spacer { height: 90px; }
         h2.main-title { font-size: 20px; margin: 20px 0 30px 0; text-align: center; font-weight: bold; }
@@ -66,12 +68,12 @@
             box-shadow: 0 0 10px #ffd700; opacity: 0.8;
         }
 
-        /* --- УЛЬТРАБАН --- */
+        /* УЛЬТРАБАН */
         .app-item.ultra { animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate; border: 3px solid white; }
         .app-item.ultra img { animation: hue-spin 1s linear infinite; filter: contrast(150%); }
         .app-item.ultra span { color: black; font-weight: 900; background: white; padding: 2px 5px; border-radius: 4px; }
 
-        /* --- СКИНЫ --- */
+        /* СКИНЫ */
         .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
         .skin-paper .app-item:not(.ultra) { background: #e8e0c5; border: 1px solid #c0b393; }
         .skin-paper .app-item:not(.ultra) span { color: #5a4a32; font-family: 'Courier New', monospace; font-weight: bold; }
@@ -162,7 +164,7 @@
         .spin-btn.active { background: #ffd700; color: black; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
         .shop-btn { background: #4285f4; color: white; box-shadow: 0 0 20px rgba(66, 133, 244, 0.3); }
 
-        /* СПИСОК ЭФФЕКТОВ */
+        /* ЭФФЕКТЫ */
         .effects-container {
             width: 90%; max-width: 400px; margin-top: 15px; display: flex; flex-direction: column; gap: 5px;
         }
@@ -197,9 +199,16 @@
         .btn-slow { background: #9da631; }
         .btn-ban { background: #c0392b; }
 
-        .take-btn { background: #ffd700; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .take-btn { background: #ffd700; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; color: black; }
 
-        .shop-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 15px; }
+        /* МАГАЗИН UI */
+        .shop-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; background: #333; border: none; border-radius: 8px; color: #888; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #ffd700; color: black; }
+        
+        .shop-content { display: none; }
+        .shop-content.active { display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; text-align: left; }
+
         .shop-item { 
             background: #2a2a2d; padding: 12px; border-radius: 12px; 
             display: flex; justify-content: space-between; align-items: center; border: 1px solid #444; 
@@ -221,8 +230,11 @@
                 <p>Баланс системы</p>
             </div>
         </div>
-        <div class="balance-box">
-            <span id="balanceDisplay">0</span> ₽
+        <div class="balance-group">
+            <div class="balance-box">
+                <span id="balanceDisplay">0</span> ₽
+            </div>
+            <div class="income-info" id="passiveDisplay">+0 ₽/сек</div>
         </div>
     </header>
 
@@ -247,7 +259,7 @@
                 <img id="selectedAppImg" src="" alt="">
                 <h3 id="selectedAppName">App</h3>
             </div>
-            <button class="action-btn btn-restrict" onclick="chooseAction('ОГРАНИЧИТЬ')">ОГРАНИЧИТЬ</button>
+            <button class="action-btn btn-restrict" onclick="chooseAction('ОГРАНИЧЕНО')">ОГРАНИЧИТЬ</button>
             <button class="action-btn btn-slow" onclick="chooseAction('ЗАМЕДЛИТЬ')">ЗАМЕДЛИТЬ</button>
             <button class="action-btn btn-ban" onclick="chooseAction('ЗАБАНИТЬ')">ЗАБАНИТЬ</button>
         </div>
@@ -262,11 +274,32 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="offlineModal">
+        <div class="modal-card" style="border: 2px solid #ffd700; background: #1a1a1d;">
+            <h3 style="color: #ffd700; text-transform: uppercase; margin-bottom: 10px;">Отчёт о блокировках</h3>
+            <p style="color: #ccc; font-size: 14px; margin: 0 0 15px 0;">
+                Пока тебя не было, мы блокировали всё подряд!
+            </p>
+            <div style="font-size: 12px; color: #888;">Заработано на штрафах:</div>
+            <h2 id="offlineMoneyText" style="font-size: 40px; color: #fff; margin: 5px 0 25px 0; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);">0 ₽</h2>
+            <button class="take-btn" style="background: #ffd700; color: black; font-weight: bold;" onclick="document.getElementById('offlineModal').style.display='none'">Положить в карман</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="shopModal">
-        <div class="modal-card" style="max-width: 400px;">
+        <div class="modal-card" style="max-width: 400px; height: 70vh; justify-content: flex-start;">
             <h2 style="margin: 0 0 15px 0;">Госзакупки</h2>
-            <div class="shop-list" id="shopList"></div>
-            <button class="btn" style="background: transparent; border: 1px solid #555; color: #aaa; width: 100%; padding: 10px;" onclick="closeShop()">Закрыть</button>
+            
+            <div class="shop-tabs">
+                <button class="tab-btn active" onclick="switchTab('skins')">Скины</button>
+                <button class="tab-btn" onclick="switchTab('afk')">Доход АФК</button>
+            </div>
+
+            <div id="shopSkins" class="shop-content active"></div>
+            
+            <div id="shopAFK" class="shop-content"></div>
+
+            <button class="btn" style="background: transparent; border: 1px solid #555; color: #aaa; width: 100%; padding: 10px; margin-top: auto;" onclick="closeShop()">Закрыть</button>
         </div>
     </div>
 
@@ -287,8 +320,22 @@
 
         const rknAudio = new Audio('RKN.mp3'); rknAudio.loop = true; 
 
-        // --- СПИСОК ТОВАРОВ ---
-        const shopItems = [
+        // --- ДАННЫЕ ПРОМОКОДОВ ---
+        const promoCodes = {
+            "RKNPIDORI": { type: "boost", duration: 15*60, val: 0.3, msg: "УЛЬТРАБАН 30% (15 мин)" },
+            "GOSDUMA": { type: "money", val: 50000000, msg: "Грант от Госдумы: +50,000,000 ₽" },
+            "X2": { type: "multiply_balance", val: 2, msg: "Удвоение текущего бюджета!" },
+            "TOTALBLOCK": { type: "next_spin_ultra", val: true, msg: "Следующий спин - 100% УЛЬТРАБАН!" },
+            "CORRUPTION": { type: "shop_discount", val: 0.5, duration: 10*60, msg: "Скидка 50% в магазине (10 мин)" },
+            "MINING": { type: "global_mult", val: 5, duration: 5*60, msg: "Майнинг: Доход x5 (5 мин)" },
+            "FREENEON": { type: "unlock_skin", val: "neon", msg: "Скин Cyber RKN получен!" },
+            "FLASH": { type: "speed_spin", duration: 3*60, msg: "Мгновенные спины (3 мин)" },
+            "POOR": { type: "reset_money", msg: "Баланс сброшен... Зато честно." },
+            "SECRET": { type: "random_money", msg: "Секретная награда получена!" }
+        };
+
+        // --- СКИНЫ ---
+        const skinItems = [
             { id: 'default', name: 'Стандарт', price: 0, mult: 1, desc: 'Обычный вид' },
             { id: 'paper', name: 'Бюрократия', price: 50000, mult: 1.2, desc: 'Завалено бумагами', class: 'skin-paper' },
             { id: 'retro', name: 'Windows 95', price: 150000, mult: 1.5, desc: 'Старая школа', class: 'skin-retro' },
@@ -311,34 +358,32 @@
             { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' }
         ];
 
-        // --- ДАННЫЕ ПРОМОКОДОВ ---
-        const promoCodes = {
-            "RKNPIDORI": { type: "boost", duration: 15*60, val: 0.3, msg: "УЛЬТРАБАН 30% (15 мин)" },
-            "GOSDUMA": { type: "money", val: 50000000, msg: "Грант от Госдумы: +50,000,000 ₽" },
-            "X2": { type: "multiply_balance", val: 2, msg: "Удвоение текущего бюджета!" },
-            "TOTALBLOCK": { type: "next_spin_ultra", val: true, msg: "Следующий спин - 100% УЛЬТРАБАН!" },
-            "CORRUPTION": { type: "shop_discount", val: 0.5, duration: 10*60, msg: "Скидка 50% в магазине (10 мин)" },
-            "MINING": { type: "global_mult", val: 5, duration: 5*60, msg: "Майнинг: Доход x5 (5 мин)" },
-            "FREENEON": { type: "unlock_skin", val: "neon", msg: "Скин Cyber RKN получен!" },
-            "FLASH": { type: "speed_spin", duration: 3*60, msg: "Мгновенные спины (3 мин)" },
-            "POOR": { type: "reset_money", msg: "Баланс сброшен... Зато честно." },
-            "SECRET": { type: "random_money", msg: "Секретная награда получена!" }
-        };
+        // --- АФК ТОВАРЫ ---
+        const afkItems = [
+            { id: 'intern', name: 'Стажёр', price: 5000, income: 100, desc: 'Блокирует вручную' },
+            { id: 'printer', name: 'Принтер законов', price: 25000, income: 500, desc: 'Печатает запреты' },
+            { id: 'script', name: 'Скрипт на Python', price: 100000, income: 2500, desc: 'Автоматический бан' },
+            { id: 'botfarm', name: 'Ботоферма', price: 500000, income: 15000, desc: 'Пишут жалобы 24/7' },
+            { id: 'server', name: 'Сервер блокировок', price: 2500000, income: 80000, desc: 'Железо не спит' },
+            { id: 'ai', name: 'ИИ Цензор', price: 10000000, income: 350000, desc: 'Нейросеть ищет крамолу' },
+            { id: 'satellite', name: 'Спутник-Глушилка', price: 50000000, income: 2000000, desc: 'Ломает GPS и Интернет' },
+            { id: 'dpi', name: 'Система DPI', price: 250000000, income: 10000000, desc: 'Deep Packet Inspection' },
+            { id: 'firewall', name: 'Великий Файрвол', price: 1000000000, income: 50000000, desc: 'Изоляция страны' },
+            { id: 'switch', name: 'РУБИЛЬНИК', price: 50000000000, income: 1000000000, desc: 'Выключает Интернет' }
+        ];
 
         // --- СОСТОЯНИЕ ---
         let balance = parseInt(localStorage.getItem('rkn_balance')) || 0;
         let inventory = JSON.parse(localStorage.getItem('rkn_inventory')) || ['default'];
+        let afkInventory = JSON.parse(localStorage.getItem('rkn_afk')) || {}; // { id: count }
         let usedCodes = JSON.parse(localStorage.getItem('rkn_used_codes')) || [];
         let currentSkinId = localStorage.getItem('rkn_skin') || 'default';
-        let currentWinAmount = 0;
+        let activeEffects = JSON.parse(localStorage.getItem('rkn_active_effects')) || {};
         
+        let currentWinAmount = 0;
         let logoClicks = 0;
         let clickResetTimer;
         let uiUpdateInterval;
-
-        // Активные эффекты { id: timestamp_end }
-        let activeEffects = JSON.parse(localStorage.getItem('rkn_active_effects')) || {};
-        // Флаги (не сохраняемые)
         let forceUltra = false; 
 
         const CARD_WIDTH = 100; const MARGIN_SIDE = 5; const SLOT_WIDTH = CARD_WIDTH + (MARGIN_SIDE * 2);
@@ -346,17 +391,24 @@
         let isSpinning = false;
         let rouletteList = [];
 
+        // --- ИНИЦИАЛИЗАЦИЯ ---
         function init() {
+            // Оффлайн доход (вызываем сразу при загрузке)
+            checkOfflineEarnings();
+
             updateBalanceUI();
             applySkin(currentSkinId);
             startEffectsLoop();
-            
+            startPassiveIncomeLoop(); // Запуск АФК
+
             if(currentSkinId === 'the_end') { rknAudio.play().catch(e => console.log("")); }
 
+            generateRoulette();
+        }
+
+        function generateRoulette() {
             track.innerHTML = '';
             rouletteList = [];
-
-            // Проверка буста на ультрабан
             const boostEndTime = activeEffects['RKNPIDORI'] || 0;
             const ultraChance = (boostEndTime > Date.now()) ? 0.3 : 0.005;
 
@@ -364,14 +416,11 @@
                 let batch = [...apps];
                 batch.sort(() => Math.random() - 0.5);
                 batch = batch.map(app => {
-                    if(Math.random() < ultraChance) { 
-                        return { name: "УЛЬТРАБАН", img: "logo.png", isUltra: true };
-                    }
+                    if(Math.random() < ultraChance) return { name: "УЛЬТРАБАН", img: "logo.png", isUltra: true };
                     return app;
                 });
                 rouletteList = rouletteList.concat(batch);
             }
-            
             rouletteList.forEach(app => {
                 const div = document.createElement('div');
                 div.className = 'app-item' + (app.isUltra ? ' ultra' : '');
@@ -379,34 +428,81 @@
                 track.appendChild(div);
             });
         }
-        init();
 
-        // --- СИСТЕМА ПРОМОКОДОВ ---
+        // --- АФК СИСТЕМА ---
+        function getPassiveIncome() {
+            let total = 0;
+            for(const [id, count] of Object.entries(afkInventory)) {
+                const item = afkItems.find(i => i.id === id);
+                if(item) total += item.income * count;
+            }
+            // Множитель от майнинга работает и тут!
+            const globalMult = getGlobalMultiplier();
+            return total * globalMult;
+        }
+
+        function startPassiveIncomeLoop() {
+            setInterval(() => {
+                const income = getPassiveIncome();
+                if(income > 0) {
+                    balance += income;
+                    saveGame(); // Сохраняем каждую секунду
+                }
+                updateBalanceUI();
+            }, 1000);
+        }
+
+        function checkOfflineEarnings() {
+            const lastTime = parseInt(localStorage.getItem('rkn_last_time'));
+            if(lastTime) {
+                const now = Date.now();
+                const diffSeconds = Math.floor((now - lastTime) / 1000);
+                
+                // Считаем без множителя майнинга (он временный), берем чистый доход
+                let basePassive = 0;
+                for(const [id, count] of Object.entries(afkInventory)) {
+                    const item = afkItems.find(i => i.id === id);
+                    if(item) basePassive += item.income * count;
+                }
+
+                if(diffSeconds > 10 && basePassive > 0) {
+                    const earned = diffSeconds * basePassive;
+                    balance += earned;
+                    document.getElementById('offlineMoneyText').innerText = earned.toLocaleString() + ' ₽';
+                    document.getElementById('offlineModal').style.display = 'flex';
+                }
+            }
+            saveGame();
+        }
+
+        function saveGame() {
+            localStorage.setItem('rkn_balance', balance);
+            localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
+            localStorage.setItem('rkn_afk', JSON.stringify(afkInventory));
+            localStorage.setItem('rkn_last_time', Date.now()); // Метка времени для оффлайна
+        }
+
+        // --- UI ---
+        function updateBalanceUI() {
+            document.getElementById('balanceDisplay').innerText = Math.floor(balance).toLocaleString();
+            document.getElementById('passiveDisplay').innerText = '+' + getPassiveIncome().toLocaleString() + ' ₽/сек';
+        }
+
+        // --- ПРОМОКОДЫ ---
         function handleLogoClick() {
             logoClicks++;
             clearTimeout(clickResetTimer);
             clickResetTimer = setTimeout(() => { logoClicks = 0; }, 1000);
-            if(logoClicks >= 10) {
-                logoClicks = 0;
-                askForCode();
-            }
+            if(logoClicks >= 10) { logoClicks = 0; askForCode(); }
         }
 
         function askForCode() {
             const code = prompt("Введите секретный код:");
             if(!code) return;
-            
             const upperCode = code.toUpperCase().trim();
-            if(usedCodes.includes(upperCode)) {
-                alert("Этот код уже был использован!");
-                return;
-            }
-
-            if(promoCodes[upperCode]) {
-                activateCode(upperCode, promoCodes[upperCode]);
-            } else {
-                alert("Неверный код!");
-            }
+            if(usedCodes.includes(upperCode)) { alert("Код уже использован!"); return; }
+            if(promoCodes[upperCode]) activateCode(upperCode, promoCodes[upperCode]);
+            else alert("Неверный код!");
         }
 
         function activateCode(codeStr, data) {
@@ -414,81 +510,58 @@
             localStorage.setItem('rkn_used_codes', JSON.stringify(usedCodes));
             alert(data.msg);
 
-            if(data.type === 'money') {
-                balance += data.val;
-                saveBalance();
-            } else if (data.type === 'multiply_balance') {
-                balance *= data.val;
-                saveBalance();
-            } else if (data.type === 'reset_money') {
-                balance = 0;
-                saveBalance();
-            } else if (data.type === 'random_money') {
-                balance += Math.floor(Math.random() * 100000000) + 1;
-                saveBalance();
-            } else if (data.type === 'unlock_skin') {
-                if(!inventory.includes(data.val)) {
-                    inventory.push(data.val);
-                    localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
-                } else {
-                    balance += 1000000; // Компенсация
-                    alert("Скин уже есть. Компенсация: 1,000,000 ₽");
-                    saveBalance();
-                }
-            } else if (data.type === 'next_spin_ultra') {
-                forceUltra = true;
-            } else if (data.duration) {
-                // Эффекты с таймером
+            if(data.type === 'money') balance += data.val;
+            else if (data.type === 'multiply_balance') balance *= data.val;
+            else if (data.type === 'reset_money') balance = 0;
+            else if (data.type === 'random_money') balance += Math.floor(Math.random() * 100000000) + 1;
+            else if (data.type === 'unlock_skin') {
+                if(!inventory.includes(data.val)) inventory.push(data.val);
+                else { balance += 1000000; alert("Компенсация: 1,000,000 ₽"); }
+            } else if (data.type === 'next_spin_ultra') forceUltra = true;
+            else if (data.duration) {
                 activeEffects[codeStr] = Date.now() + (data.duration * 1000);
                 localStorage.setItem('rkn_active_effects', JSON.stringify(activeEffects));
-                // Если это буст шанса, надо перегенерировать ленту
-                if(codeStr === 'RKNPIDORI') init();
+                if(codeStr === 'RKNPIDORI') generateRoulette();
             }
-            
-            updateBalanceUI();
+            saveGame();
         }
 
-        function saveBalance() {
-            localStorage.setItem('rkn_balance', balance);
-            updateBalanceUI();
-        }
-
-        // --- ЦИКЛ ЭФФЕКТОВ ---
         function startEffectsLoop() {
             if(uiUpdateInterval) clearInterval(uiUpdateInterval);
             uiUpdateInterval = setInterval(() => {
                 const now = Date.now();
                 const container = document.getElementById('effectsContainer');
                 container.innerHTML = '';
-                let hasActive = false;
-
+                
                 for (const [code, endTime] of Object.entries(activeEffects)) {
                     if (endTime > now) {
-                        hasActive = true;
                         const left = endTime - now;
                         const min = Math.floor(left / 60000);
                         const sec = Math.floor((left % 60000) / 1000);
-                        
                         const div = document.createElement('div');
-                        let colorClass = 'eff-green';
-                        let label = code;
+                        let color = 'eff-green', label = code;
+                        
+                        if(code === 'RKNPIDORI') label = "УЛЬТРАБАН 30%";
+                        if(code === 'CORRUPTION') { color = 'eff-purple'; label = "СКИДКА 50%"; }
+                        if(code === 'MINING') { color = 'eff-blue'; label = "ДОХОД x5"; }
+                        if(code === 'FLASH') { color = 'eff-red'; label = "БЫСТРЫЙ СПИН"; }
 
-                        if(code === 'RKNPIDORI') { colorClass = 'eff-green'; label = "УЛЬТРАБАН 30%"; }
-                        if(code === 'CORRUPTION') { colorClass = 'eff-purple'; label = "СКИДКА 50%"; }
-                        if(code === 'MINING') { colorClass = 'eff-blue'; label = "ДОХОД x5"; }
-                        if(code === 'FLASH') { colorClass = 'eff-red'; label = "БЫСТРЫЙ СПИН"; }
-
-                        div.className = `effect-badge ${colorClass}`;
+                        div.className = `effect-badge ${color}`;
                         div.innerHTML = `<span>${label}</span><span>${min}:${sec < 10 ? '0' : ''}${sec}</span>`;
                         container.appendChild(div);
                     } else {
-                        // Эффект закончился
                         delete activeEffects[code];
                         localStorage.setItem('rkn_active_effects', JSON.stringify(activeEffects));
-                        if(code === 'RKNPIDORI') init(); // Вернуть обычный шанс
+                        if(code === 'RKNPIDORI') generateRoulette();
                     }
                 }
             }, 1000);
+        }
+
+        function getGlobalMultiplier() {
+            let m = 1;
+            if((activeEffects['MINING'] || 0) > Date.now()) m *= 5;
+            return m;
         }
 
         // --- РУЛЕТКА ---
@@ -497,40 +570,23 @@
             isSpinning = true;
             document.getElementById('spinBtn').classList.remove('active');
 
-            // Проверка на форс ультра
             let selectedApp, stopIndex;
-            
             if (forceUltra) {
-                // Найти ближайший ультрабан
                 stopIndex = rouletteList.findIndex((item, idx) => idx > 300 && item.isUltra);
-                if(stopIndex === -1) { 
-                    // Если вдруг не нашли, создадим фейковый
-                    stopIndex = 500;
-                    rouletteList[stopIndex] = { name: "УЛЬТРАБАН", img: "logo.png", isUltra: true };
-                }
-                forceUltra = false; // Сброс флага
-            } else {
-                stopIndex = Math.floor(Math.random() * 500) + 500; 
-            }
-            
+                if(stopIndex === -1) { stopIndex = 500; rouletteList[stopIndex] = { name: "УЛЬТРАБАН", img: "logo.png", isUltra: true }; }
+                forceUltra = false;
+            } else { stopIndex = Math.floor(Math.random() * 500) + 500; }
             selectedApp = rouletteList[stopIndex];
 
-            const containerCenter = document.getElementById('rouletteBox').offsetWidth / 2;
-            const itemLeftPos = (stopIndex * SLOT_WIDTH) + MARGIN_SIDE;
-            const itemCenterPos = itemLeftPos + (CARD_WIDTH / 2);
-            const offset = -(itemCenterPos - containerCenter);
-
-            // Проверка на быстрый спин
+            const center = document.getElementById('rouletteBox').offsetWidth / 2;
+            const offset = -((stopIndex * SLOT_WIDTH) + MARGIN_SIDE + (CARD_WIDTH / 2) - center);
             const isFlash = (activeEffects['FLASH'] || 0) > Date.now();
-            const duration = isFlash ? 0.5 : 4;
+            const dur = isFlash ? 0.5 : 4;
 
-            track.style.transition = `transform ${duration}s cubic-bezier(0.1, 0.9, 0.2, 1)`;
+            track.style.transition = `transform ${dur}s cubic-bezier(0.1, 0.9, 0.2, 1)`;
             track.style.transform = `translateX(${offset}px)`;
 
-            setTimeout(() => {
-                showActionChoice(selectedApp);
-                isSpinning = false;
-            }, duration * 1000);
+            setTimeout(() => { showActionChoice(selectedApp); isSpinning = false; }, dur * 1000);
         }
 
         function showActionChoice(app) {
@@ -540,144 +596,140 @@
             document.getElementById('actionModal').style.display = 'flex';
         }
 
-        function getGlobalMultiplier() {
-            let m = 1;
-            if((activeEffects['MINING'] || 0) > Date.now()) m *= 5;
-            return m;
-        }
-
         function triggerUltraReward() {
-            const basePool = 200000 * 32; 
-            const skinData = shopItems.find(i => i.id === currentSkinId);
-            const skinMult = skinData ? skinData.mult : 1;
-            
-            currentWinAmount = basePool * skinMult * getGlobalMultiplier();
-
-            const stamp = document.getElementById('resultStamp');
-            stamp.innerText = "УЛЬТРАБАН";
-            stamp.style.background = "linear-gradient(45deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)";
-            stamp.style.animation = "hue-spin 1s linear infinite";
-
+            const base = 200000 * 32; 
+            const sData = skinItems.find(i => i.id === currentSkinId);
+            currentWinAmount = base * (sData ? sData.mult : 1) * getGlobalMultiplier();
+            document.getElementById('resultStamp').innerText = "УЛЬТРАБАН";
             document.getElementById('moneyText').innerText = currentWinAmount.toLocaleString() + ' ₽';
             document.getElementById('rewardModal').style.display = 'flex';
         }
 
         function chooseAction(type) {
             document.getElementById('actionModal').style.display = 'none';
-            const stamp = document.getElementById('resultStamp');
-            stamp.innerText = type;
-            stamp.style.animation = "none";
-            
-            if(type === 'ЗАБАНЕНО') stamp.style.background = '#c0392b';
-            if(type === 'ЗАМЕДЛЕНО') stamp.style.background = '#9da631';
-            if(type === 'ОГРАНИЧИТЬ') stamp.style.background = '#e67e22';
-
+            document.getElementById('resultStamp').innerText = type;
             let min = 20000, max = 50000;
             if(type === 'ЗАМЕДЛИТЬ') { min = 50000; max = 80000; }
             if(type === 'ЗАБАНИТЬ') { min = 100000; max = 200000; }
-
-            const skinData = shopItems.find(i => i.id === currentSkinId);
-            const skinMult = skinData ? skinData.mult : 1;
-
-            min *= skinMult * getGlobalMultiplier();
-            max *= skinMult * getGlobalMultiplier();
-
-            const rawMoney = Math.floor(Math.random() * (max - min + 1)) + min;
-            currentWinAmount = Math.ceil(rawMoney / 100) * 100;
-
+            const sData = skinItems.find(i => i.id === currentSkinId);
+            const m = (sData ? sData.mult : 1) * getGlobalMultiplier();
+            const raw = Math.floor(Math.random() * (max*m - min*m + 1)) + min*m;
+            currentWinAmount = Math.ceil(raw / 100) * 100;
             document.getElementById('moneyText').innerText = currentWinAmount.toLocaleString() + ' ₽';
             document.getElementById('rewardModal').style.display = 'flex';
         }
 
         function collectMoney() {
             balance += currentWinAmount;
-            saveBalance();
+            saveGame();
             document.getElementById('rewardModal').style.display = 'none';
             document.getElementById('spinBtn').classList.add('active');
             track.style.transition = "none";
             track.style.transform = "translateX(0px)";
         }
 
-        function updateBalanceUI() {
-            document.getElementById('balanceDisplay').innerText = balance.toLocaleString();
-        }
-
-        // --- МАГАЗИН ---
-        function openShop() {
-            const list = document.getElementById('shopList');
-            list.innerHTML = '';
-            
-            const isDiscount = (activeEffects['CORRUPTION'] || 0) > Date.now();
-
-            shopItems.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'shop-item';
-                
-                const isOwned = inventory.includes(item.id);
-                const isEquipped = currentSkinId === item.id;
-                
-                // Расчет цены
-                let finalPrice = item.price;
-                let priceHtml = item.price > 0 ? item.price.toLocaleString() : 'Бесплатно';
-                
-                if(isDiscount && item.price > 0) {
-                    finalPrice = Math.floor(item.price * 0.5);
-                    priceHtml = `<span class="old-price">${item.price.toLocaleString()}</span> <span style="color:#00ff00">${finalPrice.toLocaleString()}</span>`;
-                }
-
-                let btnHtml = '';
-                if (isEquipped) {
-                    btnHtml = `<button class="buy-btn equipped">Надето</button>`;
-                } else if (isOwned) {
-                    btnHtml = `<button class="buy-btn" style="background:#2196f3" onclick="equip('${item.id}')">Надеть</button>`;
-                } else {
-                    btnHtml = `<button class="buy-btn" onclick="buy('${item.id}', ${finalPrice})">Купить</button>`;
-                }
-
-                div.innerHTML = `
-                    <div class="shop-item-info">
-                        <div style="font-weight:bold; font-size:15px;">${item.name}</div>
-                        <div style="font-size:11px; color:#aaa">${item.desc}</div>
-                        <div class="item-mult">Доход: x${item.mult}</div>
-                        <div style="color:#ffd700; font-size:13px; margin-top:2px">${priceHtml}</div>
-                    </div>
-                    ${btnHtml}
-                `;
-                list.appendChild(div);
-            });
-            document.getElementById('shopModal').style.display = 'flex';
-        }
-
+        // --- МАГАЗИН ЛОГИКА ---
+        function openShop() { switchTab('skins'); document.getElementById('shopModal').style.display = 'flex'; }
         function closeShop() { document.getElementById('shopModal').style.display = 'none'; }
-
-        function buy(id, price) {
-            if (balance >= price) {
-                balance -= price;
-                inventory.push(id);
-                localStorage.setItem('rkn_balance', balance);
-                localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
-                updateBalanceUI();
-                openShop(); // Обновить чтобы кнопки сменились
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.shop-content').forEach(c => c.classList.remove('active'));
+            if(tab === 'skins') {
+                document.querySelector('button[onclick="switchTab(\'skins\')"]').classList.add('active');
+                document.getElementById('shopSkins').classList.add('active');
+                renderSkins();
             } else {
-                alert("Нужно больше денег!");
+                document.querySelector('button[onclick="switchTab(\'afk\')"]').classList.add('active');
+                document.getElementById('shopAFK').classList.add('active');
+                renderAFK();
             }
         }
 
+        function renderSkins() {
+            const list = document.getElementById('shopSkins'); list.innerHTML = '';
+            const isDisc = (activeEffects['CORRUPTION'] || 0) > Date.now();
+            skinItems.forEach(item => {
+                const div = document.createElement('div'); div.className = 'shop-item';
+                const owned = inventory.includes(item.id);
+                const equipped = currentSkinId === item.id;
+                let price = item.price;
+                let priceHtml = item.price > 0 ? item.price.toLocaleString() : 'Бесплатно';
+                if(isDisc && item.price > 0) {
+                    price = Math.floor(item.price * 0.5);
+                    priceHtml = `<span class="old-price">${item.price.toLocaleString()}</span> <span style="color:#00ff00">${price.toLocaleString()}</span>`;
+                }
+                let btn = `<button class="buy-btn" onclick="buySkin('${item.id}', ${price})">Купить</button>`;
+                if(owned) btn = `<button class="buy-btn" style="background:#2196f3" onclick="equip('${item.id}')">Надеть</button>`;
+                if(equipped) btn = `<button class="buy-btn equipped">Надето</button>`;
+                
+                div.innerHTML = `
+                    <div class="shop-item-info">
+                        <div style="font-weight:bold;">${item.name}</div>
+                        <div style="font-size:11px; color:#aaa">${item.desc}</div>
+                        <div class="item-mult">Доход: x${item.mult}</div>
+                        <div style="color:#ffd700; font-size:13px;">${priceHtml}</div>
+                    </div>
+                    ${btn}`;
+                list.appendChild(div);
+            });
+        }
+
+        function renderAFK() {
+            const list = document.getElementById('shopAFK'); list.innerHTML = '';
+            const isDisc = (activeEffects['CORRUPTION'] || 0) > Date.now();
+            afkItems.forEach(item => {
+                const div = document.createElement('div'); div.className = 'shop-item';
+                const count = afkInventory[item.id] || 0;
+                let price = item.price; // Цена пока статичная, можно сделать рост цены
+                let priceHtml = item.price.toLocaleString();
+                if(isDisc) {
+                    price = Math.floor(item.price * 0.5);
+                    priceHtml = `<span class="old-price">${item.price.toLocaleString()}</span> <span style="color:#00ff00">${price.toLocaleString()}</span>`;
+                }
+                div.innerHTML = `
+                    <div class="shop-item-info">
+                        <div style="font-weight:bold;">${item.name} <span style="color:white; background:#444; padding:2px 5px; border-radius:4px; font-size:10px;">У вас: ${count}</span></div>
+                        <div style="font-size:11px; color:#aaa">${item.desc}</div>
+                        <div class="item-mult" style="color:#00aaff">+${item.income.toLocaleString()} ₽/сек</div>
+                        <div style="color:#ffd700; font-size:13px;">${priceHtml}</div>
+                    </div>
+                    <button class="buy-btn" onclick="buyAFK('${item.id}', ${price})">Купить</button>`;
+                list.appendChild(div);
+            });
+        }
+
+        function buySkin(id, price) {
+            if(balance >= price) {
+                balance -= price; inventory.push(id);
+                saveGame(); renderSkins();
+            } else alert("Мало денег!");
+        }
+
+        function buyAFK(id, price) {
+            if(balance >= price) {
+                balance -= price;
+                afkInventory[id] = (afkInventory[id] || 0) + 1;
+                saveGame(); renderAFK(); updateBalanceUI();
+            } else alert("Мало денег!");
+        }
+
         function equip(id) {
-            currentSkinId = id;
-            localStorage.setItem('rkn_skin', id);
+            currentSkinId = id; localStorage.setItem('rkn_skin', id);
             applySkin(id);
-            if(id === 'the_end') { rknAudio.currentTime = 0; rknAudio.play().catch(e => console.log(e)); } 
+            if(id === 'the_end') { rknAudio.currentTime = 0; rknAudio.play().catch(e=>{}); } 
             else { rknAudio.pause(); rknAudio.currentTime = 0; }
-            openShop();
+            renderSkins();
         }
 
         function applySkin(id) {
-            const box = document.getElementById('rouletteBox');
-            box.className = 'roulette-container';
-            const item = shopItems.find(i => i.id === id);
+            const box = document.getElementById('rouletteBox'); box.className = 'roulette-container';
+            const item = skinItems.find(i => i.id === id);
             if(item && item.class) box.classList.add(item.class);
         }
+
+        // Запуск
+        init();
     </script>
 </body>
 </html>
