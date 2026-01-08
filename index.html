@@ -90,22 +90,17 @@
 
         /* --- СКИН LIQUID GLASS (VIP) --- */
         .skin-liquid-glass {
-            background: rgba(10, 10, 10, 0.4); /* Полупрозрачный черный */
-            backdrop-filter: blur(20px); /* Сильный блюр фона */
-            border: 1px solid rgba(255, 255, 255, 0.15); /* Тонкая рамка */
-            box-shadow: 
-                0 0 40px rgba(0, 0, 0, 0.8), /* Глубокая тень */
-                inset 0 0 30px rgba(255, 255, 255, 0.05); /* Внутреннее свечение */
+            background: rgba(10, 10, 10, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.05);
             animation: liquid-pulse 4s infinite ease-in-out;
         }
-        /* Блик на стекле */
         .skin-liquid-glass::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
             transform: rotate(45deg); animation: shine 6s infinite linear; pointer-events: none; z-index: 20;
         }
-        
-        /* Иконки в стиле Liquid Glass - ЧБ VIP */
         .skin-liquid-glass .app-item:not(.ultra) {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -113,7 +108,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         .skin-liquid-glass .app-item:not(.ultra) img {
-            filter: grayscale(100%) brightness(1.5) contrast(1.2); /* ЧБ стиль */
+            filter: grayscale(100%) brightness(1.5) contrast(1.2);
             opacity: 0.9;
         }
         .skin-liquid-glass .app-item:not(.ultra) span {
@@ -128,7 +123,7 @@
         .app-item.ultra img { animation: hue-spin 1s linear infinite; filter: contrast(150%); }
         .app-item.ultra span { color: black; font-weight: 900; background: white; padding: 2px 5px; border-radius: 4px; }
 
-        /* Другие скины (упрощено для экономии места) */
+        /* Другие скины */
         .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; }
         .skin-neon .app-item:not(.ultra) { border: 1px solid #00f3ff; color: #00f3ff; }
         .skin-neon .center-line { background: #00f3ff; }
@@ -580,13 +575,16 @@
 
         // --- PRESTIGE ---
         function doPrestige() {
-            if(balance < 1000000000000) { alert("Нужно накопит 1 Триллион!"); return; }
-            if(confirm("Вы уверены? Весь прогресс сбросится, но вы получите Очки Коррупции.")) {
+            if(balance < 1000000000000) { alert("Нужно накопить 1 Триллион!"); return; }
+            if(confirm("Вы уверены? Весь прогресс сбросится (включая скин), но вы получите Очки Коррупции.")) {
                 corruption += 10; // +10 очков
                 balance = 0;
                 afkInventory = {};
                 techInventory = [];
-                // Скины остаются
+                // СБРОС СКИНА:
+                currentSkinId = 'default'; 
+                localStorage.setItem('rkn_skin', 'default');
+                
                 saveGame();
                 location.reload();
             }
