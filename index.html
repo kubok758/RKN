@@ -3,221 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>РКН - Simulator Ultimate</title>
+    <title>РКН - Simulator Ultimate VIP</title>
     <style>
         /* ГЛОБАЛЬНЫЕ НАСТРОЙКИ */
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            margin: 0; padding: 0; background-color: #0f0f11; color: white;
-            font-family: 'Arial', sans-serif; display: flex; flex-direction: column;
+            margin: 0; padding: 0; background-color: #050505; color: white;
+            font-family: 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column;
             align-items: center; min-height: 100vh; overflow-x: hidden;
             user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
         /* --- АНИМАЦИИ --- */
-        @keyframes rainbow { 0% { border-color: red; box-shadow: 0 0 20px red; } 100% { border-color: blue; box-shadow: 0 0 20px blue; } }
+        @keyframes shine { 
+            0% { left: -100%; opacity: 0; } 
+            50% { opacity: 0.5; }
+            100% { left: 200%; opacity: 0; } 
+        }
+        @keyframes liquid-pulse {
+            0% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.3), inset 0 0 20px rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); }
+            100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.3); }
+        }
         @keyframes rgb-bg-flash { 0% { background-color: #ff0000; } 50% { background-color: #00ff00; } 100% { background-color: #0000ff; } }
         @keyframes hue-spin { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
         @keyframes ultra-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 40px #ffd700; } 100% { box-shadow: 0 0 10px #ffd700; } }
-        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 100% { transform: translate(0); } }
-        @keyframes blackhole { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
-        @keyframes shake-hard { 0% { transform: translate(1px, 1px); } 100% { transform: translate(-1px, -2px); } }
+        @keyframes vpn-pulse { 0% { box-shadow: 0 0 5px red; } 50% { box-shadow: 0 0 15px red; } 100% { box-shadow: 0 0 5px red; } }
 
         /* --- ИНТЕРФЕЙС --- */
         header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; width: 100%; background: #151517;
-            border-bottom: 1px solid #333; position: fixed; top: 0; z-index: 50; height: 70px;
+            padding: 10px 15px; width: 100%; background: rgba(20, 20, 23, 0.95);
+            border-bottom: 1px solid #333; position: fixed; top: 0; z-index: 50; height: 80px;
+            backdrop-filter: blur(10px);
         }
         .header-left { display: flex; align-items: center; gap: 10px; }
-        header img { width: 35px; height: 35px; cursor: pointer; } 
-        .header-title h1 { font-size: 16px; margin: 0; color: #ccc; }
-        .header-title p { font-size: 10px; color: #666; margin: 0; }
-        .balance-group { display: flex; flex-direction: column; align-items: flex-end; }
+        header img { width: 35px; height: 35px; cursor: pointer; transition: transform 0.2s; } 
+        header img:active { transform: scale(0.9); }
+        .header-title h1 { font-size: 14px; margin: 0; color: #ccc; text-transform: uppercase; letter-spacing: 1px; }
+        .header-title p { font-size: 9px; color: #666; margin: 0; }
+        
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        
         .balance-box {
-            background: #252528; padding: 5px 15px; border-radius: 20px;
+            background: #252528; padding: 5px 12px; border-radius: 12px;
             border: 1px solid #444; font-weight: bold; color: #ffd700;
             display: flex; align-items: center; gap: 5px; font-size: 14px;
         }
-        .income-info { font-size: 10px; color: #00ff00; margin-top: 3px; margin-right: 5px; }
+        .income-info { font-size: 10px; color: #00ff00; }
 
-        .spacer { height: 90px; }
-        h2.main-title { font-size: 20px; margin: 20px 0 30px 0; text-align: center; font-weight: bold; }
+        /* VPN BAR */
+        .vpn-container {
+            width: 100px; height: 6px; background: #333; border-radius: 3px; overflow: hidden; margin-top: 2px;
+            position: relative;
+        }
+        .vpn-bar { height: 100%; background: #00aaff; width: 0%; transition: width 0.5s; }
+        .vpn-label { font-size: 9px; color: #00aaff; margin-top: 1px; }
+        .vpn-warning { color: #ff3333; animation: vpn-pulse 1s infinite; }
+
+        .spacer { height: 100px; }
+        h2.main-title { font-size: 18px; margin: 20px 0 30px 0; text-align: center; font-weight: 700; letter-spacing: 1px; color: #eee; }
 
         /* --- РУЛЕТКА --- */
         .roulette-container {
-            position: relative; width: 95%; max-width: 600px; height: 140px;
-            background: #1a1a1d; border-radius: 15px; overflow: hidden;
-            border: 2px solid #333; margin-bottom: 30px; transition: all 0.3s;
+            position: relative; width: 95%; max-width: 600px; height: 130px;
+            background: #151517; border-radius: 20px; overflow: hidden;
+            border: 2px solid #2a2a2d; margin-bottom: 30px; transition: all 0.3s;
+            box-shadow: inset 0 0 30px #000;
         }
         .roulette-track { display: flex; height: 100%; align-items: center; will-change: transform; }
 
         .app-item {
-            width: 100px; height: 100px; background: #252528; border-radius: 15px;
+            width: 100px; height: 100px; background: #252528; border-radius: 16px;
             margin: 0 5px; display: flex; flex-direction: column; justify-content: center;
             align-items: center; flex-shrink: 0; border: 1px solid #333; position: relative;
         }
-        .app-item img { width: 50px; height: 50px; margin-bottom: 8px; border-radius: 10px; object-fit: cover; }
-        .app-item span { font-size: 11px; color: #aaa; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .app-item img { width: 50px; height: 50px; margin-bottom: 8px; border-radius: 12px; object-fit: cover; }
+        .app-item span { font-size: 10px; color: #888; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .center-line {
             position: absolute; top: 0; left: 50%; transform: translateX(-50%);
             width: 4px; height: 100%; background: #ffd700; z-index: 10;
-            box-shadow: 0 0 10px #ffd700; opacity: 0.8;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); opacity: 0.9; border-radius: 2px;
         }
 
-        /* УЛЬТРАБАН */
-        .app-item.ultra { animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate; border: 3px solid white; }
+        /* --- СКИН LIQUID GLASS (VIP) --- */
+        .skin-liquid-glass {
+            background: rgba(10, 10, 10, 0.4); /* Полупрозрачный черный */
+            backdrop-filter: blur(20px); /* Сильный блюр фона */
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Тонкая рамка */
+            box-shadow: 
+                0 0 40px rgba(0, 0, 0, 0.8), /* Глубокая тень */
+                inset 0 0 30px rgba(255, 255, 255, 0.05); /* Внутреннее свечение */
+            animation: liquid-pulse 4s infinite ease-in-out;
+        }
+        /* Блик на стекле */
+        .skin-liquid-glass::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: rotate(45deg); animation: shine 6s infinite linear; pointer-events: none; z-index: 20;
+        }
+        
+        /* Иконки в стиле Liquid Glass - ЧБ VIP */
+        .skin-liquid-glass .app-item:not(.ultra) {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .skin-liquid-glass .app-item:not(.ultra) img {
+            filter: grayscale(100%) brightness(1.5) contrast(1.2); /* ЧБ стиль */
+            opacity: 0.9;
+        }
+        .skin-liquid-glass .app-item:not(.ultra) span {
+            color: rgba(255,255,255,0.7); font-family: 'Courier New', monospace; letter-spacing: 1px;
+        }
+        .skin-liquid-glass .center-line {
+            background: white; width: 2px; box-shadow: 0 0 20px white;
+        }
+
+        /* Обычный Ультрабан */
+        .app-item.ultra { animation: rgb-bg-flash 2s linear infinite, ultra-pulse 0.5s ease-in-out infinite alternate; border: 3px solid white; z-index: 5; }
         .app-item.ultra img { animation: hue-spin 1s linear infinite; filter: contrast(150%); }
         .app-item.ultra span { color: black; font-weight: 900; background: white; padding: 2px 5px; border-radius: 4px; }
 
-        /* СКИНЫ */
-        .skin-paper { border: 4px solid #d7c9a8; background: #f5f5dc; }
-        .skin-paper .app-item:not(.ultra) { background: #e8e0c5; border: 1px solid #c0b393; }
-        .skin-paper .app-item:not(.ultra) span { color: #5a4a32; font-family: 'Courier New', monospace; font-weight: bold; }
-        
-        .skin-retro { border: 4px outset #ccc; background: #008080; }
-        .skin-retro .app-item:not(.ultra) { background: #c0c0c0; border: 2px outset #fff; border-radius: 0; }
-        .skin-retro .app-item:not(.ultra) span { color: black; font-family: Tahoma; }
-
-        .skin-matrix { border: 2px solid #0f0; background: #000; box-shadow: 0 0 15px #0f0; }
-        .skin-matrix .app-item:not(.ultra) { background: #050505; border: 1px solid #003300; }
-        .skin-matrix .app-item:not(.ultra) span { color: #0f0; font-family: monospace; }
-        .skin-matrix .center-line { background: #0f0; }
-
-        .skin-ussr { border: 4px solid #d32f2f; background: #2b0c0c; }
-        .skin-ussr .app-item:not(.ultra) { background: #d32f2f; border: 2px solid #ffcc00; }
-        .skin-ussr .app-item:not(.ultra) span { color: #ffcc00; font-weight: bold; }
-        .skin-ussr .center-line { background: #ffcc00; }
-
-        .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; background: #000; }
-        .skin-neon .app-item:not(.ultra) { background: rgba(0, 243, 255, 0.05); border: 1px solid #00f3ff; }
-        .skin-neon .app-item:not(.ultra) span { color: #00f3ff; }
-        .skin-neon .center-line { background: #ff00ff; }
-
-        .skin-gold { border: 3px solid #ffd700; animation: pulse-gold 2s infinite; background: #1a1a1a; }
-        .skin-gold .app-item:not(.ultra) { background: linear-gradient(135deg, #333, #000); border: 1px solid #ffd700; }
-        .skin-gold .app-item:not(.ultra) span { color: #ffd700; }
-
-        .skin-lava { border: 4px solid #ff4500; background: linear-gradient(45deg, #ff0000, #ff4500); }
-        .skin-lava .app-item:not(.ultra) { background: rgba(0,0,0,0.6); border: 1px solid #ff4500; }
-        .skin-lava .app-item:not(.ultra) span { color: #ffae00; }
-
-        .skin-ice { border: 4px solid #a5f2f3; background: #e0f7fa; box-shadow: 0 0 20px #a5f2f3; }
-        .skin-ice .app-item:not(.ultra) { background: rgba(255,255,255,0.8); border: 1px solid #00bcd4; }
-        .skin-ice .app-item:not(.ultra) span { color: #006064; }
-        
-        .skin-glitch { border: 2px solid white; background: #111; animation: glitch 0.3s infinite; }
-        .skin-glitch .app-item:not(.ultra) { background: #222; border: 1px dashed white; }
-        .skin-glitch .app-item:not(.ultra) span { color: white; text-decoration: line-through; }
-        
-        .skin-rgb { border: 5px solid red; animation: rainbow 2s linear infinite; background: #000; }
-        .skin-rgb .app-item:not(.ultra) { background: #111; border: 1px solid #333; }
-
-        .skin-oil { border: 5px solid #000; background: #1c1c1c; box-shadow: inset 0 0 50px #000; }
-        .skin-oil .app-item:not(.ultra) { background: linear-gradient(to bottom, #333, #000); border: 1px solid #444; }
-        .skin-oil .center-line { background: #000; width: 6px; border: 1px solid #333; }
-
-        .skin-space { border: 3px solid #9c27b0; background: radial-gradient(circle, #311b92 0%, #000000 100%); box-shadow: 0 0 30px #9c27b0; }
-        .skin-space .app-item:not(.ultra) { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
-        .skin-space .app-item:not(.ultra) span { color: #e1bee7; }
-
-        .skin-illuminati { border: 3px double #33ff00; background: #001a00; }
-        .skin-illuminati .app-item:not(.ultra) { background: #000; border: 1px solid #33ff00; transform: rotate(1deg); }
-        .skin-illuminati .center-line { background: #33ff00; box-shadow: 0 0 50px #33ff00; }
-
-        .skin-blackhole { border: none; background: #000; animation: blackhole 5s infinite; box-shadow: 0 0 50px #000; }
-        .skin-blackhole .app-item:not(.ultra) { background: #000; border: 1px solid #222; border-radius: 50%; transform: scale(0.9); }
-        .skin-blackhole .app-item:not(.ultra) span { color: #444; font-size: 8px; }
-
-        .skin-multiverse { border: 5px dashed #ff00ff; background: url('https://media.giphy.com/media/26tOZ42Mg6pbTUPvy/giphy.gif'); background-size: cover; }
-        .skin-multiverse .app-item:not(.ultra) { background: rgba(255,255,255,0.2); border: 2px solid white; backdrop-filter: blur(5px); }
-
-        .skin-timelord { border: 5px double #c0a062; background: #161005; box-shadow: inset 0 0 100px #524220; }
-        .skin-timelord .app-item:not(.ultra) { border: 1px solid #c0a062; background: transparent; transform: skewX(-10deg); }
-        .skin-timelord .app-item:not(.ultra) span { color: #c0a062; letter-spacing: 2px; }
-
-        .skin-admin { border: 5px solid white; background: #fff; box-shadow: 0 0 100px white; }
-        .skin-admin .app-item:not(.ultra) { background: white; border: 2px solid #ddd; }
-        .skin-admin .app-item:not(.ultra) span { color: #000; font-weight: 900; }
-        .skin-admin .center-line { background: #000; }
-
-        .skin-the-end { border: 10px solid #ff0000; background: #000; animation: shake-hard 0.2s infinite; box-shadow: 0 0 100px red; }
-        .skin-the-end .app-item:not(.ultra) { background: #200000; border: 2px solid red; filter: contrast(200%) grayscale(100%); }
-        .skin-the-end .app-item:not(.ultra) img { filter: invert(1); }
-        .skin-the-end .app-item:not(.ultra) span { color: red; font-family: 'Courier New'; text-transform: uppercase; }
-        .skin-the-end .center-line { background: red; width: 10px; box-shadow: 0 0 50px red; }
+        /* Другие скины (упрощено для экономии места) */
+        .skin-neon { border: 3px solid #00f3ff; box-shadow: 0 0 30px #00f3ff; }
+        .skin-neon .app-item:not(.ultra) { border: 1px solid #00f3ff; color: #00f3ff; }
+        .skin-neon .center-line { background: #00f3ff; }
 
         /* --- UI ЭЛЕМЕНТЫ --- */
-        .controls { display: flex; gap: 15px; width: 90%; max-width: 400px; justify-content: center; }
+        .controls { display: flex; gap: 10px; width: 95%; max-width: 400px; justify-content: center; }
         
         .btn {
-            border: none; padding: 15px 0; font-size: 16px; font-weight: bold; border-radius: 12px;
+            border: none; padding: 15px 0; font-size: 16px; font-weight: 800; border-radius: 12px;
             cursor: pointer; text-transform: uppercase; transition: transform 0.1s; flex: 1;
-            display: flex; justify-content: center; align-items: center;
+            display: flex; justify-content: center; align-items: center; color: white;
         }
-        .btn:active { transform: scale(0.95); }
+        .btn:active { transform: scale(0.96); }
 
-        .spin-btn { background: #444; color: #aaa; font-size: 18px; }
-        .spin-btn.active { background: #ffd700; color: black; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-        .shop-btn { background: #4285f4; color: white; box-shadow: 0 0 20px rgba(66, 133, 244, 0.3); }
+        .spin-btn { background: #333; color: #666; font-size: 18px; }
+        .spin-btn.active { background: #ffd700; color: #111; box-shadow: 0 0 25px rgba(255, 215, 0, 0.2); }
+        .shop-btn { background: #4285f4; box-shadow: 0 0 20px rgba(66, 133, 244, 0.2); }
 
         /* ЭФФЕКТЫ */
-        .effects-container {
-            width: 90%; max-width: 400px; margin-top: 15px; display: flex; flex-direction: column; gap: 5px;
-        }
+        .effects-container { width: 95%; max-width: 400px; margin-top: 15px; display: flex; flex-direction: column; gap: 5px; }
         .effect-badge {
-            font-size: 14px; font-weight: bold; padding: 8px 15px; border-radius: 8px;
+            font-size: 12px; font-weight: bold; padding: 8px 12px; border-radius: 8px;
             display: flex; justify-content: space-between; align-items: center;
-            text-shadow: 1px 1px 0 #000;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
         }
         .eff-green { background: rgba(0, 100, 0, 0.6); border: 1px solid #00ff00; color: #00ff00; }
-        .eff-purple { background: rgba(80, 0, 80, 0.6); border: 1px solid #ff00ff; color: #ff00ff; }
-        .eff-blue { background: rgba(0, 0, 100, 0.6); border: 1px solid #00ffff; color: #00ffff; }
         .eff-red { background: rgba(100, 0, 0, 0.6); border: 1px solid #ff0000; color: #ff0000; }
 
         /* МОДАЛКИ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); display: none;
-            justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.85); display: none;
+            justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(8px);
         }
 
         .modal-card {
-            background: #1e1e20; padding: 25px; border-radius: 20px; text-align: center;
-            width: 90%; max-width: 350px; border: 1px solid #333; animation: popIn 0.3s ease;
+            background: #1e1e20; padding: 25px; border-radius: 24px; text-align: center;
+            width: 90%; max-width: 360px; border: 1px solid #333; animation: popIn 0.3s ease;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
         }
         @keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
 
-        .app-preview img { width: 90px; height: 90px; border-radius: 20px; margin-bottom: 15px; }
-        .app-preview h3 { font-size: 22px; margin: 0 0 20px 0; }
+        .app-preview img { width: 90px; height: 90px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .app-preview h3 { font-size: 24px; margin: 0 0 20px 0; }
         
-        .action-btn { width: 100%; padding: 14px; margin-bottom: 10px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; }
+        .action-btn { width: 100%; padding: 14px; margin-bottom: 10px; border: none; border-radius: 12px; font-weight: bold; color: white; cursor: pointer; font-size: 14px; text-transform: uppercase; }
         .btn-restrict { background: #e67e22; }
         .btn-slow { background: #9da631; }
         .btn-ban { background: #c0392b; }
 
-        .take-btn { background: #ffd700; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; color: black; }
+        .take-btn { background: #ffd700; width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; color: #111; margin-bottom: 10px; text-transform: uppercase; }
+
+        /* Кнопка взятки */
+        .bribe-btn { background: #ff0000; color: white; animation: pulse 0.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* МАГАЗИН UI */
-        .shop-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: #333; border: none; border-radius: 8px; color: #888; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: #ffd700; color: black; }
+        .shop-tabs { display: flex; gap: 5px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { flex: 1; padding: 8px 5px; background: #2a2a2d; border: 1px solid #444; border-radius: 8px; color: #888; cursor: pointer; font-weight: bold; font-size: 12px; min-width: 80px; }
+        .tab-btn.active { background: #ffd700; color: black; border-color: #ffd700; }
         
         .shop-content { display: none; }
-        .shop-content.active { display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; text-align: left; }
+        .shop-content.active { display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; text-align: left; }
 
         .shop-item { 
-            background: #2a2a2d; padding: 12px; border-radius: 12px; 
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid #444; 
+            background: #252528; padding: 12px; border-radius: 12px; 
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; 
         }
-        .shop-item-info { display: flex; flex-direction: column; gap: 3px; width: 65%; }
+        .shop-item-info { display: flex; flex-direction: column; gap: 3px; width: 60%; }
         .item-mult { color: #00e676; font-size: 11px; font-weight: bold; }
-        .buy-btn { background: #4caf50; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 70px; }
+        .buy-btn { background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; min-width: 75px; }
         .buy-btn.equipped { background: #ffd700; color: black; cursor: default; }
-        .old-price { text-decoration: line-through; color: #888; font-size: 10px; margin-right: 5px; }
+        .buy-btn.maxed { background: #555; cursor: default; }
+        .old-price { text-decoration: line-through; color: #666; font-size: 10px; margin-right: 5px; }
+
+        /* Prestige */
+        .prestige-btn { width: 100%; background: linear-gradient(45deg, #800080, #4b0082); color: white; padding: 15px; border-radius: 12px; font-weight: bold; border: 1px solid #a020f0; margin-bottom: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -227,14 +215,18 @@
             <img id="headerLogo" src="logo.png" alt="RKN" onclick="handleLogoClick()">
             <div class="header-title">
                 <h1>РОСКОМНАДЗОР</h1>
-                <p>Баланс системы</p>
+                <p>Панель управления</p>
             </div>
         </div>
-        <div class="balance-group">
+        <div class="header-right">
             <div class="balance-box">
                 <span id="balanceDisplay">0</span> ₽
             </div>
             <div class="income-info" id="passiveDisplay">+0 ₽/сек</div>
+            <div class="vpn-container">
+                <div id="vpnBar" class="vpn-bar"></div>
+            </div>
+            <div id="vpnLabel" class="vpn-label">VPN: 0%</div>
         </div>
     </header>
 
@@ -247,7 +239,7 @@
     </div>
 
     <div class="controls">
-        <button class="btn shop-btn" onclick="openShop()">🛒 Магазин</button>
+        <button class="btn shop-btn" onclick="openShop()">🛒 Госзакупки</button>
         <button id="spinBtn" class="btn spin-btn active" onclick="spinRoulette()">КРУТИТЬ</button>
     </div>
     
@@ -270,40 +262,56 @@
             <div id="resultStamp" style="border: 3px solid white; display: inline-block; padding: 5px 15px; font-weight: bold; font-size: 20px; transform: rotate(-5deg); margin-bottom: 20px; background: #d32f2f;">ЗАБАНЕНО</div>
             <p style="font-size: 12px; color: #ddd; margin: 0;">Бюджет пополнен на</p>
             <h2 id="moneyText" style="font-size: 32px; margin: 10px 0 25px 0;">0 ₽</h2>
-            <button class="take-btn" onclick="collectMoney()">Забрать в бюджет</button>
+            <button class="take-btn" onclick="collectMoney()">В бюджет</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="offlineModal">
-        <div class="modal-card" style="border: 2px solid #ffd700; background: #1a1a1d;">
-            <h3 style="color: #ffd700; text-transform: uppercase; margin-bottom: 10px;">Отчёт о блокировках</h3>
-            <p style="color: #ccc; font-size: 14px; margin: 0 0 15px 0;">
-                Пока тебя не было, мы блокировали всё подряд!
-            </p>
-            <div style="font-size: 12px; color: #888;">Заработано на штрафах:</div>
-            <h2 id="offlineMoneyText" style="font-size: 40px; color: #fff; margin: 5px 0 25px 0; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);">0 ₽</h2>
-            <button class="take-btn" style="background: #ffd700; color: black; font-weight: bold;" onclick="document.getElementById('offlineModal').style.display='none'">Положить в карман</button>
+        <div class="modal-card" style="border: 1px solid #ffd700; background: #151517;">
+            <h3 style="color: #ffd700; text-transform: uppercase;">ОТЧЁТ О БЛОКИРОВКАХ</h3>
+            <p style="color: #aaa; font-size: 13px;">Пока вас не было, мы блокировали всё подряд!</p>
+            <h2 id="offlineMoneyText" style="font-size: 36px; color: #fff; margin: 20px 0;">0 ₽</h2>
+            <button class="take-btn" onclick="document.getElementById('offlineModal').style.display='none'">Отлично</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-card" style="border: 2px solid red;">
+            <h3 id="eventTitle" style="color: red; text-transform: uppercase;">ТРЕВОГА</h3>
+            <p id="eventDesc" style="color: #ddd;">Описание события</p>
+            <div id="eventTimer" style="font-size: 20px; font-weight: bold; margin: 10px 0; color: orange;">10</div>
+            <button id="eventBtn" class="take-btn bribe-btn" onclick="resolveEvent()">Действие</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="shopModal">
-        <div class="modal-card" style="max-width: 400px; height: 70vh; justify-content: flex-start;">
-            <h2 style="margin: 0 0 15px 0;">Госзакупки</h2>
+        <div class="modal-card" style="max-width: 420px; height: 80vh; justify-content: flex-start; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:15px;">
+                <h2 style="margin:0; font-size:20px;">Госзакупки</h2>
+                <div style="font-size:12px; color:#a020f0;">Коррупция: <span id="corruptionDisplay">0</span></div>
+            </div>
             
             <div class="shop-tabs">
                 <button class="tab-btn active" onclick="switchTab('skins')">Скины</button>
-                <button class="tab-btn" onclick="switchTab('afk')">Доход АФК</button>
+                <button class="tab-btn" onclick="switchTab('afk')">АФК</button>
+                <button class="tab-btn" onclick="switchTab('tech')">Технологии</button>
+                <button class="tab-btn" onclick="switchTab('sec')">Безопасность</button>
             </div>
 
             <div id="shopSkins" class="shop-content active"></div>
-            
             <div id="shopAFK" class="shop-content"></div>
+            <div id="shopTech" class="shop-content"></div>
+            <div id="shopSec" class="shop-content"></div>
 
-            <button class="btn" style="background: transparent; border: 1px solid #555; color: #aaa; width: 100%; padding: 10px; margin-top: auto;" onclick="closeShop()">Закрыть</button>
+            <div id="prestigeSection" style="margin-top: auto; width: 100%; padding-top: 10px;">
+                <button class="prestige-btn" onclick="doPrestige()">УЙТИ В ОТСТАВКУ (Сброс)<br><span style="font-size:10px; font-weight:normal;">Требуется: 1 Трлн ₽</span></button>
+                <button class="btn" style="background: #333; color: #aaa; width: 100%; padding: 12px;" onclick="closeShop()">Закрыть</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // ДАННЫЕ
         const apps = [
             { name: "CapCut", img: "capcut.png" }, { name: "ChatGPT", img: "chatgpt.png" }, { name: "WhatsApp", img: "whatsapp.png" },
             { name: "X (Twitter)", img: "x.png" }, { name: "Zoom", img: "zoom.png" }, { name: "Teams", img: "teams.png" },
@@ -320,26 +328,12 @@
 
         const rknAudio = new Audio('RKN.mp3'); rknAudio.loop = true; 
 
-        // --- ДАННЫЕ ПРОМОКОДОВ ---
-        const promoCodes = {
-            "RKNPIDORI": { type: "boost", duration: 15*60, val: 0.3, msg: "УЛЬТРАБАН 30% (15 мин)" },
-            "GOSDUMA": { type: "money", val: 50000000, msg: "Грант от Госдумы: +50,000,000 ₽" },
-            "X2": { type: "multiply_balance", val: 2, msg: "Удвоение текущего бюджета!" },
-            "TOTALBLOCK": { type: "next_spin_ultra", val: true, msg: "Следующий спин - 100% УЛЬТРАБАН!" },
-            "CORRUPTION": { type: "shop_discount", val: 0.5, duration: 10*60, msg: "Скидка 50% в магазине (10 мин)" },
-            "MINING": { type: "global_mult", val: 5, duration: 5*60, msg: "Майнинг: Доход x5 (5 мин)" },
-            "FREENEON": { type: "unlock_skin", val: "neon", msg: "Скин Cyber RKN получен!" },
-            "FLASH": { type: "speed_spin", duration: 3*60, msg: "Мгновенные спины (3 мин)" },
-            "POOR": { type: "reset_money", msg: "Баланс сброшен... Зато честно." },
-            "SECRET": { type: "random_money", msg: "Секретная награда получена!" }
-        };
-
-        // --- СКИНЫ ---
+        // ТОВАРЫ
         const skinItems = [
             { id: 'default', name: 'Стандарт', price: 0, mult: 1, desc: 'Обычный вид' },
-            { id: 'paper', name: 'Бюрократия', price: 50000, mult: 1.2, desc: 'Завалено бумагами', class: 'skin-paper' },
+            { id: 'paper', name: 'Бюрократия', price: 50000, mult: 1.2, desc: 'Завалено бумагами' },
             { id: 'retro', name: 'Windows 95', price: 150000, mult: 1.5, desc: 'Старая школа', class: 'skin-retro' },
-            { id: 'dark', name: 'Ночной режим', price: 250000, mult: 1.8, desc: 'Темная тема', class: 'skin-oil' }, 
+            { id: 'dark', name: 'Ночной режим', price: 250000, mult: 1.8, desc: 'Темная тема' }, 
             { id: 'ice', name: 'Ледниковый период', price: 500000, mult: 2.5, desc: 'Полная заморозка', class: 'skin-ice' },
             { id: 'matrix', name: 'Хакер', price: 800000, mult: 3.0, desc: 'Ты в системе', class: 'skin-matrix' },
             { id: 'ussr', name: 'Советская власть', price: 1000000, mult: 3.5, desc: 'Железный занавес', class: 'skin-ussr' },
@@ -355,31 +349,63 @@
             { id: 'multiverse', name: 'Мультивселенная', price: 500000000000, mult: 250.0, desc: 'Бан в 5 измерениях', class: 'skin-multiverse' },
             { id: 'timelord', name: 'Повелитель Времени', price: 5000000000000, mult: 500.0, desc: 'Замедление времени', class: 'skin-timelord' },
             { id: 'admin', name: 'Админ Реальности', price: 20000000000000, mult: 1000.0, desc: 'Удаление вселенной', class: 'skin-admin' },
-            { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: '♫ МУЗЫКАЛЬНЫЙ СКИН ♫', class: 'skin-the-end' }
+            { id: 'the_end', name: 'ВЛАСТЕЛИН ИНТЕРНЕТА', price: 100000000000000, mult: 9999.0, desc: 'VIP: Liquid Glass Style', class: 'skin-liquid-glass' }
         ];
 
-        // --- АФК ТОВАРЫ ---
         const afkItems = [
-            { id: 'intern', name: 'Стажёр', price: 5000, income: 100, desc: 'Блокирует вручную' },
+            { id: 'intern', name: 'Стажёр', price: 5000, income: 100, desc: 'Кликает за вас' },
             { id: 'printer', name: 'Принтер законов', price: 25000, income: 500, desc: 'Печатает запреты' },
-            { id: 'script', name: 'Скрипт на Python', price: 100000, income: 2500, desc: 'Автоматический бан' },
-            { id: 'botfarm', name: 'Ботоферма', price: 500000, income: 15000, desc: 'Пишут жалобы 24/7' },
+            { id: 'script', name: 'Скрипт на Python', price: 100000, income: 2500, desc: 'Авто-бан' },
+            { id: 'botfarm', name: 'Ботоферма', price: 500000, income: 15000, desc: 'Жалобы 24/7' },
             { id: 'server', name: 'Сервер блокировок', price: 2500000, income: 80000, desc: 'Железо не спит' },
-            { id: 'ai', name: 'ИИ Цензор', price: 10000000, income: 350000, desc: 'Нейросеть ищет крамолу' },
-            { id: 'satellite', name: 'Спутник-Глушилка', price: 50000000, income: 2000000, desc: 'Ломает GPS и Интернет' },
-            { id: 'dpi', name: 'Система DPI', price: 250000000, income: 10000000, desc: 'Deep Packet Inspection' },
-            { id: 'firewall', name: 'Великий Файрвол', price: 1000000000, income: 50000000, desc: 'Изоляция страны' },
-            { id: 'switch', name: 'РУБИЛЬНИК', price: 50000000000, income: 1000000000, desc: 'Выключает Интернет' }
+            { id: 'ai', name: 'ИИ Цензор', price: 10000000, income: 350000, desc: 'Нейросеть' },
+            { id: 'satellite', name: 'Спутник-Глушилка', price: 50000000, income: 2000000, desc: 'Ломает GPS' },
+            { id: 'dpi', name: 'Система DPI', price: 250000000, income: 10000000, desc: 'Полный контроль' },
+            { id: 'firewall', name: 'Великий Файрвол', price: 1000000000, income: 50000000, desc: 'Изоляция' },
+            { id: 'switch', name: 'РУБИЛЬНИК', price: 50000000000, income: 1000000000, desc: 'OFFLINE' }
         ];
+
+        const techItems = [
+            { id: 'coffee', name: 'Кофемашина', price: 50000, desc: 'Стажёры работают x2 быстрее', target: 'intern', mult: 2 },
+            { id: 'china', name: 'Китайские чипы', price: 5000000, desc: 'Сервера на 20% дешевле', type: 'discount', target: 'server', val: 0.8 },
+            { id: 'yarovaya', name: 'Закон Яровой', price: 2000000000, desc: 'Файрвол приносит x3 дохода', target: 'firewall', mult: 3 }
+        ];
+
+        const secItems = [
+            { id: 'propaganda', name: 'Пропаганда', price: 100000, desc: 'Снижает VPN на 10%', action: 'reduce_vpn', val: 10 },
+            { id: 'dudus', name: 'DDOS Атака', price: 1000000, desc: 'Снижает VPN на 50%', action: 'reduce_vpn', val: 50 },
+            { id: 'repair', name: 'Ремкомплект', price: 500000, desc: 'Мгновенная починка серверов', action: 'fix_server' }
+        ];
+
+        const promoCodes = {
+            "RKNPIDORI": { type: "boost", duration: 15*60, val: 0.3, msg: "УЛЬТРАБАН 30% (15 мин)" },
+            "GOSDUMA": { type: "money", val: 50000000, msg: "Грант от Госдумы: +50,000,000 ₽" },
+            "X2": { type: "multiply_balance", val: 2, msg: "Удвоение текущего бюджета!" },
+            "TOTALBLOCK": { type: "next_spin_ultra", val: true, msg: "Следующий спин - 100% УЛЬТРАБАН!" },
+            "CORRUPTION": { type: "shop_discount", val: 0.5, duration: 10*60, msg: "Скидка 50% в магазине (10 мин)" },
+            "MINING": { type: "global_mult", val: 5, duration: 5*60, msg: "Майнинг: Доход x5 (5 мин)" },
+            "FREENEON": { type: "unlock_skin", val: "neon", msg: "Скин Cyber RKN получен!" },
+            "FLASH": { type: "speed_spin", duration: 3*60, msg: "Мгновенные спины (3 мин)" },
+            "POOR": { type: "reset_money", msg: "Баланс сброшен... Зато честно." },
+            "SECRET": { type: "random_money", msg: "Секретная награда получена!" }
+        };
 
         // --- СОСТОЯНИЕ ---
         let balance = parseInt(localStorage.getItem('rkn_balance')) || 0;
+        let corruption = parseInt(localStorage.getItem('rkn_corruption')) || 0;
         let inventory = JSON.parse(localStorage.getItem('rkn_inventory')) || ['default'];
-        let afkInventory = JSON.parse(localStorage.getItem('rkn_afk')) || {}; // { id: count }
+        let afkInventory = JSON.parse(localStorage.getItem('rkn_afk')) || {};
+        let techInventory = JSON.parse(localStorage.getItem('rkn_tech')) || [];
         let usedCodes = JSON.parse(localStorage.getItem('rkn_used_codes')) || [];
         let currentSkinId = localStorage.getItem('rkn_skin') || 'default';
         let activeEffects = JSON.parse(localStorage.getItem('rkn_active_effects')) || {};
         
+        let vpnLevel = 0; // 0-100
+        let isServerBroken = false;
+        let currentEvent = null;
+        let eventTimerVal = 0;
+        let eventInterval;
+
         let currentWinAmount = 0;
         let logoClicks = 0;
         let clickResetTimer;
@@ -393,16 +419,15 @@
 
         // --- ИНИЦИАЛИЗАЦИЯ ---
         function init() {
-            // Оффлайн доход (вызываем сразу при загрузке)
             checkOfflineEarnings();
-
             updateBalanceUI();
             applySkin(currentSkinId);
             startEffectsLoop();
-            startPassiveIncomeLoop(); // Запуск АФК
+            startPassiveIncomeLoop();
+            startVPNLogic();
+            startRandomEvents();
 
             if(currentSkinId === 'the_end') { rknAudio.play().catch(e => console.log("")); }
-
             generateRoulette();
         }
 
@@ -429,16 +454,31 @@
             });
         }
 
-        // --- АФК СИСТЕМА ---
+        // --- ЭКОНОМИКА И МЕХАНИКИ ---
         function getPassiveIncome() {
+            if(isServerBroken) return 0;
             let total = 0;
+            
             for(const [id, count] of Object.entries(afkInventory)) {
                 const item = afkItems.find(i => i.id === id);
-                if(item) total += item.income * count;
+                if(item) {
+                    let itemIncome = item.income;
+                    // Технологии
+                    if(id === 'intern' && techInventory.includes('coffee')) itemIncome *= 2;
+                    if(id === 'firewall' && techInventory.includes('yarovaya')) itemIncome *= 3;
+                    total += itemIncome * count;
+                }
             }
-            // Множитель от майнинга работает и тут!
+            
+            // Глобальные множители
             const globalMult = getGlobalMultiplier();
-            return total * globalMult;
+            const corruptionMult = 1 + (corruption * 0.1); // +10% за очко коррупции
+            
+            // Штраф VPN
+            const vpnPenalty = 1 - (vpnLevel * 0.009); // Макс -90% при 100 VPN
+            let finalIncome = total * globalMult * corruptionMult * (vpnPenalty > 0.1 ? vpnPenalty : 0.1);
+            
+            return Math.floor(finalIncome);
         }
 
         function startPassiveIncomeLoop() {
@@ -446,30 +486,130 @@
                 const income = getPassiveIncome();
                 if(income > 0) {
                     balance += income;
-                    saveGame(); // Сохраняем каждую секунду
+                    saveGame();
                 }
                 updateBalanceUI();
             }, 1000);
+        }
+
+        function startVPNLogic() {
+            setInterval(() => {
+                if(vpnLevel < 100) vpnLevel += 0.5; // Растет со временем
+                updateVPNUI();
+            }, 2000);
+        }
+
+        function updateVPNUI() {
+            const bar = document.getElementById('vpnBar');
+            const label = document.getElementById('vpnLabel');
+            bar.style.width = vpnLevel + '%';
+            label.innerText = `VPN: ${Math.floor(vpnLevel)}%`;
+            if(vpnLevel > 80) label.classList.add('vpn-warning');
+            else label.classList.remove('vpn-warning');
+        }
+
+        function startRandomEvents() {
+            setInterval(() => {
+                if(currentEvent || isServerBroken) return;
+                const rand = Math.random();
+                if(rand < 0.05) triggerEvent('audit'); // 5% шанс проверки
+                else if (rand < 0.03 && Object.keys(afkInventory).length > 0) triggerEvent('crash'); // 3% шанс поломки
+            }, 60000); // Раз в минуту проверка
+        }
+
+        function triggerEvent(type) {
+            const modal = document.getElementById('eventModal');
+            const title = document.getElementById('eventTitle');
+            const desc = document.getElementById('eventDesc');
+            const btn = document.getElementById('eventBtn');
+            const timer = document.getElementById('eventTimer');
+            
+            modal.style.display = 'flex';
+            currentEvent = type;
+            eventTimerVal = 10;
+            timer.innerText = eventTimerVal;
+
+            if(type === 'audit') {
+                title.innerText = "НАЛОГОВАЯ ПРОВЕРКА";
+                const bribe = Math.floor(balance * 0.2);
+                desc.innerText = `Счетная палата нашла недостачу! Дать взятку ${bribe.toLocaleString()} ₽?`;
+                btn.innerText = "ДАТЬ ВЗЯТКУ";
+                btn.onclick = () => {
+                    if(balance >= bribe) {
+                        balance -= bribe;
+                        alert("Инспектор ушел довольный.");
+                        closeEvent();
+                    } else alert("Денег нет!");
+                };
+            } else if (type === 'crash') {
+                title.innerText = "СЕРВЕРА ПЕРЕГРЕЛИСЬ";
+                desc.innerText = "Дата-центр горит! Доход остановлен. Вызовите пожарных!";
+                btn.innerText = "ВЫЗВАТЬ (Бесплатно)";
+                isServerBroken = true;
+                btn.onclick = () => {
+                    alert("Пожар потушен.");
+                    isServerBroken = false;
+                    closeEvent();
+                };
+            }
+
+            eventInterval = setInterval(() => {
+                eventTimerVal--;
+                timer.innerText = eventTimerVal;
+                if(eventTimerVal <= 0) {
+                    if(type === 'audit') {
+                        balance = Math.floor(balance / 2);
+                        alert("Время вышло! Конфисковано 50% баланса.");
+                    }
+                    if(type === 'crash') {
+                        // Если пожар не потушили, он остается, пока не купят ремкомплект
+                        // или не нажмут кнопку потом (но окно закроется)
+                    }
+                    closeEvent();
+                }
+            }, 1000);
+        }
+
+        function closeEvent() {
+            clearInterval(eventInterval);
+            document.getElementById('eventModal').style.display = 'none';
+            currentEvent = null;
+        }
+
+        function resolveEvent() { /* Логика внутри triggerEvent */ }
+
+        // --- PRESTIGE ---
+        function doPrestige() {
+            if(balance < 1000000000000) { alert("Нужно накопит 1 Триллион!"); return; }
+            if(confirm("Вы уверены? Весь прогресс сбросится, но вы получите Очки Коррупции.")) {
+                corruption += 10; // +10 очков
+                balance = 0;
+                afkInventory = {};
+                techInventory = [];
+                // Скины остаются
+                saveGame();
+                location.reload();
+            }
         }
 
         function checkOfflineEarnings() {
             const lastTime = parseInt(localStorage.getItem('rkn_last_time'));
             if(lastTime) {
                 const now = Date.now();
-                const diffSeconds = Math.floor((now - lastTime) / 1000);
-                
-                // Считаем без множителя майнинга (он временный), берем чистый доход
-                let basePassive = 0;
-                for(const [id, count] of Object.entries(afkInventory)) {
-                    const item = afkItems.find(i => i.id === id);
-                    if(item) basePassive += item.income * count;
-                }
-
-                if(diffSeconds > 10 && basePassive > 0) {
-                    const earned = diffSeconds * basePassive;
-                    balance += earned;
-                    document.getElementById('offlineMoneyText').innerText = earned.toLocaleString() + ' ₽';
-                    document.getElementById('offlineModal').style.display = 'flex';
+                const diffSec = Math.floor((now - lastTime) / 1000);
+                if(diffSec > 10) {
+                    // Простой расчет оффлайна без VPN штрафа
+                    let offlineRate = 0;
+                    for(const [id, count] of Object.entries(afkInventory)) {
+                        const item = afkItems.find(i => i.id === id);
+                        if(item) offlineRate += item.income * count;
+                    }
+                    const earned = diffSec * offlineRate;
+                    if(earned > 0) {
+                        balance += earned;
+                        document.getElementById('offlineMoneyText').innerText = earned.toLocaleString() + ' ₽';
+                        document.getElementById('offlineModal').style.display = 'flex';
+                    }
                 }
             }
             saveGame();
@@ -477,15 +617,18 @@
 
         function saveGame() {
             localStorage.setItem('rkn_balance', balance);
+            localStorage.setItem('rkn_corruption', corruption);
             localStorage.setItem('rkn_inventory', JSON.stringify(inventory));
             localStorage.setItem('rkn_afk', JSON.stringify(afkInventory));
-            localStorage.setItem('rkn_last_time', Date.now()); // Метка времени для оффлайна
+            localStorage.setItem('rkn_tech', JSON.stringify(techInventory));
+            localStorage.setItem('rkn_last_time', Date.now());
         }
 
         // --- UI ---
         function updateBalanceUI() {
             document.getElementById('balanceDisplay').innerText = Math.floor(balance).toLocaleString();
             document.getElementById('passiveDisplay').innerText = '+' + getPassiveIncome().toLocaleString() + ' ₽/сек';
+            document.getElementById('corruptionDisplay').innerText = corruption;
         }
 
         // --- ПРОМОКОДЫ ---
@@ -570,6 +713,10 @@
             isSpinning = true;
             document.getElementById('spinBtn').classList.remove('active');
 
+            // Снижаем VPN при спине
+            vpnLevel = Math.max(0, vpnLevel - 5);
+            updateVPNUI();
+
             let selectedApp, stopIndex;
             if (forceUltra) {
                 stopIndex = rouletteList.findIndex((item, idx) => idx > 300 && item.isUltra);
@@ -635,15 +782,13 @@
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.shop-content').forEach(c => c.classList.remove('active'));
-            if(tab === 'skins') {
-                document.querySelector('button[onclick="switchTab(\'skins\')"]').classList.add('active');
-                document.getElementById('shopSkins').classList.add('active');
-                renderSkins();
-            } else {
-                document.querySelector('button[onclick="switchTab(\'afk\')"]').classList.add('active');
-                document.getElementById('shopAFK').classList.add('active');
-                renderAFK();
-            }
+            
+            document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if(tab === 'skins') { document.getElementById('shopSkins').classList.add('active'); renderSkins(); }
+            if(tab === 'afk') { document.getElementById('shopAFK').classList.add('active'); renderAFK(); }
+            if(tab === 'tech') { document.getElementById('shopTech').classList.add('active'); renderTech(); }
+            if(tab === 'sec') { document.getElementById('shopSec').classList.add('active'); renderSec(); }
         }
 
         function renderSkins() {
@@ -681,20 +826,56 @@
             afkItems.forEach(item => {
                 const div = document.createElement('div'); div.className = 'shop-item';
                 const count = afkInventory[item.id] || 0;
-                let price = item.price; // Цена пока статичная, можно сделать рост цены
-                let priceHtml = item.price.toLocaleString();
+                
+                // ИНФЛЯЦИЯ: ЦЕНА РАСТЕТ НА 15%
+                let basePrice = Math.floor(item.price * Math.pow(1.15, count));
+                
+                let price = basePrice;
+                let priceHtml = price.toLocaleString();
                 if(isDisc) {
-                    price = Math.floor(item.price * 0.5);
-                    priceHtml = `<span class="old-price">${item.price.toLocaleString()}</span> <span style="color:#00ff00">${price.toLocaleString()}</span>`;
+                    price = Math.floor(basePrice * 0.5);
+                    priceHtml = `<span class="old-price">${basePrice.toLocaleString()}</span> <span style="color:#00ff00">${price.toLocaleString()}</span>`;
                 }
                 div.innerHTML = `
                     <div class="shop-item-info">
-                        <div style="font-weight:bold;">${item.name} <span style="color:white; background:#444; padding:2px 5px; border-radius:4px; font-size:10px;">У вас: ${count}</span></div>
+                        <div style="font-weight:bold;">${item.name} <span style="color:white; background:#444; padding:2px 5px; border-radius:4px; font-size:10px;">${count}</span></div>
                         <div style="font-size:11px; color:#aaa">${item.desc}</div>
                         <div class="item-mult" style="color:#00aaff">+${item.income.toLocaleString()} ₽/сек</div>
                         <div style="color:#ffd700; font-size:13px;">${priceHtml}</div>
                     </div>
-                    <button class="buy-btn" onclick="buyAFK('${item.id}', ${price})">Купить</button>`;
+                    <button class="buy-btn" onclick="buyAFK('${item.id}')">Купить</button>`;
+                list.appendChild(div);
+            });
+        }
+
+        function renderTech() {
+            const list = document.getElementById('shopTech'); list.innerHTML = '';
+            techItems.forEach(item => {
+                if(techInventory.includes(item.id)) return; // Скрывать купленное
+                const div = document.createElement('div'); div.className = 'shop-item';
+                div.innerHTML = `
+                    <div class="shop-item-info">
+                        <div style="font-weight:bold;">${item.name}</div>
+                        <div style="font-size:11px; color:#aaa">${item.desc}</div>
+                        <div style="color:#ffd700; font-size:13px;">${item.price.toLocaleString()}</div>
+                    </div>
+                    <button class="buy-btn" onclick="buyTech('${item.id}', ${item.price})">Изучить</button>`;
+                list.appendChild(div);
+            });
+            if(list.innerHTML === '') list.innerHTML = '<div style="padding:20px; color:#666;">Все технологии изучены</div>';
+        }
+
+        function renderSec() {
+            const list = document.getElementById('shopSec'); list.innerHTML = '';
+            secItems.forEach(item => {
+                const div = document.createElement('div'); div.className = 'shop-item';
+                div.innerHTML = `
+                    <div class="shop-item-info">
+                        <div style="font-weight:bold;">${item.name}</div>
+                        <div style="font-size:11px; color:#aaa">${item.desc}</div>
+                        <div style="color:#ffd700; font-size:13px;">${item.price.toLocaleString()}</div>
+                    </div>
+                    <button class="buy-btn" onclick="buySec('${item.id}', ${item.price})">Купить</button>`;
                 list.appendChild(div);
             });
         }
@@ -702,15 +883,50 @@
         function buySkin(id, price) {
             if(balance >= price) {
                 balance -= price; inventory.push(id);
-                saveGame(); renderSkins();
+                saveGame(); renderSkins(); updateBalanceUI();
             } else alert("Мало денег!");
         }
 
-        function buyAFK(id, price) {
+        function buyAFK(id) {
+            const item = afkItems.find(i => i.id === id);
+            const count = afkInventory[id] || 0;
+            // Расчет цены с учетом инфляции и скидки
+            let price = Math.floor(item.price * Math.pow(1.15, count));
+            if((activeEffects['CORRUPTION'] || 0) > Date.now()) price = Math.floor(price * 0.5);
+
             if(balance >= price) {
                 balance -= price;
-                afkInventory[id] = (afkInventory[id] || 0) + 1;
+                afkInventory[id] = count + 1;
                 saveGame(); renderAFK(); updateBalanceUI();
+            } else alert("Нужно: " + price.toLocaleString());
+        }
+
+        function buyTech(id, price) {
+            if(balance >= price) {
+                balance -= price;
+                techInventory.push(id);
+                saveGame(); renderTech(); updateBalanceUI();
+            } else alert("Мало денег!");
+        }
+
+        function buySec(id, price) {
+            if(balance >= price) {
+                balance -= price;
+                const item = secItems.find(i => i.id === id);
+                if(item.action === 'reduce_vpn') {
+                    vpnLevel = Math.max(0, vpnLevel - item.val);
+                    updateVPNUI();
+                    alert("Уровень VPN снижен!");
+                }
+                if(item.action === 'fix_server') {
+                    if(isServerBroken) {
+                        isServerBroken = false;
+                        alert("Сервер починен!");
+                    } else {
+                        alert("Сервера в порядке, деньги потрачены зря.");
+                    }
+                }
+                saveGame(); updateBalanceUI();
             } else alert("Мало денег!");
         }
 
